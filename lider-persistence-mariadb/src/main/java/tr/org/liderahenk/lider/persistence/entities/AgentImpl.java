@@ -237,7 +237,17 @@ public class AgentImpl implements IAgent {
 		if (propertyImpl.getAgent() != this) {
 			propertyImpl.setAgent(this);
 		}
-		properties.add(propertyImpl);
+		boolean found = false;
+		for (AgentPropertyImpl tmp : properties) {
+			if (tmp.equals(propertyImpl)) {
+				tmp.setPropertyValue(propertyImpl.getPropertyValue());
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			properties.add(propertyImpl);
+		}
 	}
 
 	@Override
