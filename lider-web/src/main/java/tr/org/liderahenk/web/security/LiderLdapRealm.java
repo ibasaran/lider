@@ -72,11 +72,6 @@ public class LiderLdapRealm extends AbstractLdapRealm {
 	}
 
 	@Override
-	public void setSystemPassword(String systemPassword) {
-		super.setSystemPassword(systemPassword);
-	}
-
-	@Override
 	protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token,
 			LdapContextFactory contextFactory) throws NamingException {
 
