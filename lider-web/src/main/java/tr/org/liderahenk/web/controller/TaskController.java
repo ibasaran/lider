@@ -63,7 +63,7 @@ public class TaskController {
 	public IRestResponse executeTask(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/task/execute' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/task/execute' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = taskProcessor.execute(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -176,3 +176,4 @@ public class TaskController {
 	}
 
 }
+

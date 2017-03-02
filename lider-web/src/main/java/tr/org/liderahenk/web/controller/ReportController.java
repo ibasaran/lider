@@ -70,7 +70,7 @@ public class ReportController {
 	public IRestResponse validateTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/template/validate' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/template/validate' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.validateTemplate(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -89,7 +89,7 @@ public class ReportController {
 	public IRestResponse addTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/template/add' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/template/add' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.addTemplate(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -108,7 +108,7 @@ public class ReportController {
 	public IRestResponse updateTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/template/update' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/template/update' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.updateTemplate(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -182,7 +182,7 @@ public class ReportController {
 	public IRestResponse exportPdf(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/export/pdf' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/export/pdf' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.exportPdf(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -201,7 +201,7 @@ public class ReportController {
 	public IRestResponse generateView(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/view/generate' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/view/generate' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.generateView(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -220,7 +220,7 @@ public class ReportController {
 	public IRestResponse addView(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/view/add' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/view/add' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.addView(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -239,7 +239,7 @@ public class ReportController {
 	public IRestResponse updateView(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/report/view/update' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/report/view/update' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.updateView(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -313,3 +313,4 @@ public class ReportController {
 	}
 
 }
+

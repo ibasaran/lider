@@ -38,6 +38,8 @@ import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 public class ControllerUtils {
 
 	private static Logger logger = LoggerFactory.getLogger(ControllerUtils.class);
+	
+	public static final int MAX_LOG_SIZE = 1000;
 
 	/**
 	 * Decode given request body as UTF-8 string.
@@ -65,3 +67,4 @@ public class ControllerUtils {
 	}
 
 }
+
