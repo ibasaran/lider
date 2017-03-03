@@ -70,7 +70,7 @@ public class ProfileController {
 	public IRestResponse addProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/profile/add' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/profile/add' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = profileProcessor.add(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -89,7 +89,7 @@ public class ProfileController {
 	public IRestResponse updateProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/profile/update' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/profile/update' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = profileProcessor.update(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -169,3 +169,4 @@ public class ProfileController {
 	}
 
 }
+

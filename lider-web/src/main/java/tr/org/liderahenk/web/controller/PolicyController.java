@@ -72,7 +72,7 @@ public class PolicyController {
 	public IRestResponse executePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.execute(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -91,7 +91,7 @@ public class PolicyController {
 	public IRestResponse addPolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/policy/add' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/policy/add' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.add(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -110,7 +110,7 @@ public class PolicyController {
 	public IRestResponse updatePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/policy/update' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/policy/update' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.update(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -234,3 +234,4 @@ public class PolicyController {
 	}
 
 }
+

@@ -70,7 +70,7 @@ public class SearchGroupController {
 	public IRestResponse addSearchGroup(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/searchgroup/add' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/searchgroup/add' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = searchGroupProcessor.add(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -145,3 +145,4 @@ public class SearchGroupController {
 	}
 
 }
+
