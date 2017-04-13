@@ -49,7 +49,7 @@ import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImp
  * <p>
  * During agent registration, agent DN with the following format will be
  * created: <br/>
- * cn=${JID},ou=Uncategorized,dc=mys,dc=pardus,dc=org<br/>
+ * cn=${JID},ou=Ahenkler,dc=mys,dc=pardus,dc=org<br/>
  * Also, agent record and its properties will be persisted in the database.
  * </p>
  * 
@@ -179,7 +179,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 	/**
 	 * Create agent DN in the following format:<br/>
-	 * cn=${JID},ou=Uncategorized,dc=mys,dc=pardus,dc=org<br/>
+	 * cn=${JID},ou=Ahenkler,dc=mys,dc=pardus,dc=org<br/>
 	 * 
 	 * @param message
 	 *            register message
@@ -210,7 +210,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 		attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { jid });
 		attributes.put("userPassword", new String[] { password });
 		// FIXME remove this line, after correcting LDAP schema!
-		attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
+		attributes.put("owner", new String[] { "ou=Ahenkler,dc=mys,dc=pardus,dc=org" });
 		return attributes;
 	}
 
