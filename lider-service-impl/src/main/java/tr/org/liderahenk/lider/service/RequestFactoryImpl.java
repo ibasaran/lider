@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
+import tr.org.liderahenk.lider.core.api.rest.requests.IMailManagementRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
@@ -32,6 +33,7 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
+import tr.org.liderahenk.lider.service.requests.MailManagementRequestImpl;
 import tr.org.liderahenk.lider.service.requests.PolicyExecutionRequestImpl;
 import tr.org.liderahenk.lider.service.requests.PolicyRequestImpl;
 import tr.org.liderahenk.lider.service.requests.ProfileRequestImpl;
@@ -97,6 +99,13 @@ public class RequestFactoryImpl implements IRequestFactory {
 	public ISearchGroupRequest createSearchGroupRequest(String json) throws Exception {
 		logger.debug("Creating SearchGroupRequestImpl instance from json: {}", json);
 		return new ObjectMapper().readValue(json, SearchGroupRequestImpl.class);
+	}
+	
+	
+	@Override
+	public IMailManagementRequest createMailManagementRequest(String json) throws Exception {
+		logger.debug("Creating IMailManagementRequest instance from json: {}", json);
+		return new ObjectMapper().readValue(json, MailManagementRequestImpl.class);
 	}
 
 }

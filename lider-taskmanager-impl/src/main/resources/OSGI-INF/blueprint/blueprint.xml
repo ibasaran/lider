@@ -25,6 +25,8 @@
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDao" />
 		<property name="entityFactory" ref="entityFactory" />
+		<property name="mailService" ref="mailService" />
+		<property name="mailAddressDao" ref="mailAddressDao" />
 	</bean>
 
 	<!-- Task status notifier for subscribed plugins -->
@@ -35,6 +37,10 @@
 	</service>
 	<bean id="pluginNotifier"
 		class="tr.org.liderahenk.lider.taskmanager.notifiers.PluginNotifier">
+		
+		<property name="mailService" ref="mailService" />
+		<property name="mailAddressDao" ref="mailAddressDao" />
+		
 	</bean>
 	
 	<!-- Task status notifier for Lider Console -->
@@ -73,5 +79,9 @@
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
+	
+	
+	<reference id="mailService"  interface="tr.org.liderahenk.lider.core.api.mail.IMailService" />
+	<reference id="mailAddressDao"  interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao" />
 
 </blueprint>

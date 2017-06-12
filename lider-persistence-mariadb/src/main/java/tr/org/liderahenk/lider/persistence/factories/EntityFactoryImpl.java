@@ -35,6 +35,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IMailAddress;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IMailContent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
@@ -73,6 +75,8 @@ import tr.org.liderahenk.lider.persistence.entities.AgreementStatusImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
+import tr.org.liderahenk.lider.persistence.entities.MailAddressImpl;
+import tr.org.liderahenk.lider.persistence.entities.MailContentImpl;
 import tr.org.liderahenk.lider.persistence.entities.ManagedPlugin;
 import tr.org.liderahenk.lider.persistence.entities.OperationLogImpl;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
@@ -388,4 +392,19 @@ public class EntityFactoryImpl implements IEntityFactory {
 		return taskImpl;
 	}
 
+	@Override
+	public IMailContent createMailContent(IPlugin plugin, IMailContent content) {
+		
+		
+		return new MailContentImpl(null, content.getMailContent(), (PluginImpl) plugin, new Date(), null);
+	}
+
+	@Override
+	public IMailAddress createMailAddress(IPlugin plugin, IMailAddress mailAddress) {
+		return new MailAddressImpl(mailAddress.getId(), mailAddress.getMailAddress(),(PluginImpl) plugin, new Date(), mailAddress.getModifyDate(),mailAddress.isDeleted());
+	}
+	
+	
+	
+	
 }

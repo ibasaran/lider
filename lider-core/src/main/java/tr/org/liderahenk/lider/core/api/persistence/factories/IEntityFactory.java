@@ -31,6 +31,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IMailAddress;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IMailContent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
@@ -300,5 +302,10 @@ public interface IEntityFactory {
 			ICommandExecution commandExecution, Long agentId);
 
 	ITask createTask(ITask task, String cronExpression);
+
+	IMailContent createMailContent(IPlugin plugin, IMailContent content);
+
+	IMailAddress createMailAddress(IPlugin plugin, IMailAddress mailAddress);
+
 
 }

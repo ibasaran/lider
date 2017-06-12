@@ -42,6 +42,8 @@ public class LdapEntry {
 	private Map<String, String> attributes;
 
 	private DNType type;
+	
+	private boolean isOnline;
 
 	/**
 	 * 
@@ -92,6 +94,14 @@ public class LdapEntry {
 	public String toString() {
 		return "LdapEntry [distinguishedName=" + distinguishedName + ", attributes=" + attributes + ", type=" + type
 				+ "]";
+	}
+
+	public boolean isOnline() {
+		return isOnline;
+	}
+
+	public void setOnline(boolean isOnline) {
+		this.isOnline = isOnline;
 	}
 
 }

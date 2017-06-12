@@ -47,7 +47,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin
  *
  */
-@JsonIgnoreProperties({ "profiles", "distroParamsBlob" })
+@JsonIgnoreProperties({ "profiles", "distroParamsBlob","mailAddresses" })
 @Entity
 @Table(name = "C_PLUGIN", uniqueConstraints = @UniqueConstraint(columnNames = { "PLUGIN_NAME", "PLUGIN_VERSION" }))
 public class PluginImpl implements IPlugin {
@@ -94,6 +94,10 @@ public class PluginImpl implements IPlugin {
 
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<ProfileImpl> profiles = new ArrayList<ProfileImpl>(); // bidirectional
+	
+	
+	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
+	private List<MailAddressImpl> mailAddresses = new ArrayList<MailAddressImpl>(); // bidirectional
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -102,6 +106,8 @@ public class PluginImpl implements IPlugin {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "MODIFY_DATE")
 	private Date modifyDate;
+	
+	
 
 	public PluginImpl() {
 	}
@@ -310,6 +316,14 @@ public class PluginImpl implements IPlugin {
 				+ ", userOriented=" + userOriented + ", policyPlugin=" + policyPlugin + ", taskPlugin=" + taskPlugin
 				+ ", xBased=" + xBased + ", usesFileTransfer=" + usesFileTransfer + ", profiles=" + profiles
 				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
+	}
+
+	public List<MailAddressImpl> getMailAddresses() {
+		return mailAddresses;
+	}
+
+	public void setMailAddresses(List<MailAddressImpl> mailAddresses) {
+		this.mailAddresses = mailAddresses;
 	}
 
 }

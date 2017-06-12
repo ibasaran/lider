@@ -29,7 +29,7 @@
 		<feature>lider-dependent-bundles</feature>
 		<feature>lider-core-bundles</feature>
 		<!-- Use 'lider-plugin-bundles' feature only to pre-install plugins on Karaf -->
-  	<!--	<feature>lider-plugin-bundles</feature> -->
+  		<feature>lider-plugin-bundles</feature> 
 	</feature>
 
 	<feature name="lider-core-bundles" description="${project.name}"
@@ -137,6 +137,14 @@
 
 		<configfile finalname="/etc/tr.org.liderahenk.sudoers.cfg" override="true">mvn:${groupId}/lider-sudoers/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-sudoers/1.0.0</bundle>
+		
+		<configfile finalname="/etc/tr.org.liderahenk.disklimit.cfg" override="true">mvn:${groupId}/lider-disk-limit/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:${groupId}/lider-disk-limit/1.0.0</bundle>
+		
+		<configfile finalname="/etc/tr.org.liderahenk.manageroot.cfg" override="true">mvn:${groupId}/lider-manage-root/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:${groupId}/lider-manage-root/1.0.0</bundle>
+		
+		
 
 	</feature>
 

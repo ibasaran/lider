@@ -94,5 +94,8 @@
 
 	<osgi:reference id="responseFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+	
+	<osgi:reference id="mailManagementProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IMailManagementRequestProcessor" />
 		
 </beans>

@@ -93,6 +93,36 @@
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 	
+	
+	<service ref="mailAddressDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao" />
+		
+	<bean id="mailAddressDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.MailAdressDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+	
+	<service ref="mailContentDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailContentDao" />
+		
+	<bean id="mailContentDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.MailContentDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+	
+	
+	<service ref="mailParameterDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailParameterDao" />
+		
+	<bean id="mailParameterDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.MailParameterDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+	
+	
 	<!-- Custom Karaf commands did not work reliably and as of Karaf v4.0.6 its documentation is also removed... -->
 	<!-- <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
 		<command name="profile/list">

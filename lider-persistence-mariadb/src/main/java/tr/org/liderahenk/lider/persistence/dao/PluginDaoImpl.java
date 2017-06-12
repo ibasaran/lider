@@ -41,9 +41,11 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.IQueryCriteria;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IMailAddress;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CriteriaOperator;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.persistence.entities.MailAddressImpl;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 
 /**
@@ -236,6 +238,16 @@ public class PluginDaoImpl implements IPluginDao {
 		// Execute
 		return query.executeUpdate();
 	}
+	
+	
+//	@Override
+//	public List<? extends IMailAddress> getMailList(Long pluginId) {
+//		List<MailAddressImpl> mailList = entityManager
+//				.createQuery("")
+//				.getResultList();
+//		logger.debug("IPlugin objects found: {}", mailList);
+//		return mailList;
+//	}
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;

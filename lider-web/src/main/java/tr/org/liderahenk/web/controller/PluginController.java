@@ -29,12 +29,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
+import tr.org.liderahenk.lider.core.api.rest.processors.IMailManagementRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPluginRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.web.controller.utils.ControllerUtils;
@@ -53,8 +55,12 @@ public class PluginController {
 
 	@Autowired
 	private IResponseFactory responseFactory;
+	
 	@Autowired
 	private IPluginRequestProcessor pluginProcessor;
+
+	@Autowired
+	private IMailManagementRequestProcessor mailManagementProcessor;
 
 	/**
 	 * List plugins according to given parameters.
@@ -93,6 +99,35 @@ public class PluginController {
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
+
+	
+	@RequestMapping(value = "/listMail", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse getMailList(
+			@RequestParam(value = "pluginId", required = false) String pluginName
+		,	 @RequestParam(value = "version", required = false) String version 
+			,HttpServletRequest request)
+			throws UnsupportedEncodingException {
+
+		
+		
+		IRestResponse restResponse = mailManagementProcessor.list(pluginName, version);
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+	
+	
+	@RequestMapping(value = "/addMailConfiguration", method = { RequestMethod.POST })
+	@ResponseBody
+	public IRestResponse addMailConfiguration(@RequestBody String requestBody, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
+		logger.info("Request received. URL: '/lider/plugn/addMailConfiguration' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
+		IRestResponse restResponse = mailManagementProcessor.add(requestBodyDecoded);
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
 
 	/**
 	 * Handle predefined exceptions that we did not write and did not throw.

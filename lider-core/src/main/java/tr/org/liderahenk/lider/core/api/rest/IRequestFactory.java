@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.core.api.rest;
 
+import tr.org.liderahenk.lider.core.api.rest.requests.IMailManagementRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
@@ -52,5 +53,7 @@ public interface IRequestFactory {
 	IReportViewRequest createReportViewRequest(String json) throws Exception;
 
 	ISearchGroupRequest createSearchGroupRequest(String json) throws Exception;
+	
+	IMailManagementRequest createMailManagementRequest(String json) throws Exception;
 
 }
