@@ -108,6 +108,8 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 					logger.error(e.getMessage(), e);
 				}
 				if (currentUser != null && currentUser.getPrincipal() != null) {
+					request.setOwner(currentUser.getPrincipal().toString());
+					
 					if (targetEntries != null) {
 						// Find only 'permitted' entries:
 						targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
