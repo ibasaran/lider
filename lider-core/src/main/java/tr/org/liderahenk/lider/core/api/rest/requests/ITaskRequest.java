@@ -37,6 +37,10 @@ public interface ITaskRequest extends ICommandRequest {
 	String getPluginVersion();
 
 	String getCommandId();
+	
+	String getOwner();
+
+	public void setOwner(String owner);
 
 	Map<String, Object> getParameterMap();
 

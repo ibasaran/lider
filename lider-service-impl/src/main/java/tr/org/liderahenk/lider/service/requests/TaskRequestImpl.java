@@ -83,6 +83,9 @@ public class TaskRequestImpl implements ITaskRequest {
 	 * Timestamp of the request
 	 */
 	private Date timestamp;
+	
+	
+	private String owner;
 
 	public TaskRequestImpl() {
 	}
@@ -189,6 +192,16 @@ public class TaskRequestImpl implements ITaskRequest {
 				+ ", pluginVersion=" + pluginVersion + ", commandId=" + commandId + ", parameterMap=" + parameterMap
 				+ ", cronExpression=" + cronExpression + ", activationDate=" + activationDate + ", timestamp="
 				+ timestamp + "]";
+	}
+
+	@Override
+	public String getOwner() {
+		return owner;
+	}
+
+	@Override
+	public void setOwner(String owner) {
+		this.owner=owner;
 	}
 
 }
