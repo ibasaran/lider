@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,6 +29,9 @@ import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,11 +232,11 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		if (resultList != null) {
 			tasks = new ArrayList<ExecutedTask>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 4) {
+				if (arr.length != 5) {
 					continue;
 				}
 				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2],
-						(Integer) arr[3]);
+						(Integer) arr[3], (Date) arr[4]);
 				tasks.add(task);
 			}
 		}

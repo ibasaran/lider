@@ -226,7 +226,8 @@ public class CommandDaoImpl implements ICommandDao {
 	private static final String FIND_TASK_COMMAND_WITH_DETAILS = "SELECT t, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_warning then 1 ELSE 0 END) as warning, "
-			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
+			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error, "
+			+ "MAX(cer.createDate) as last_execution_date "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
 			+ "##WHERE## GROUP BY t ORDER BY t.createDate DESC";
 

@@ -58,7 +58,9 @@ public class ExecutedTask implements Serializable {
 
 	private Boolean scheduled;
 
-	public ExecutedTask(ITask task, Integer successResults, Integer warningResults, Integer errorResults) {
+	private Date lastExecutionDate;
+
+	public ExecutedTask(ITask task, Integer successResults, Integer warningResults, Integer errorResults, Date lastExecutionDate) {
 		super();
 		this.id = task.getId();
 		this.pluginName = task.getPlugin().getName();
@@ -70,6 +72,7 @@ public class ExecutedTask implements Serializable {
 		this.errorResults = errorResults;
 		this.cancelled = task.isDeleted();
 		this.scheduled = task.getCronExpression() != null && !task.getCronExpression().isEmpty();
+		this.lastExecutionDate = lastExecutionDate;
 	}
 
 	public Long getId() {
@@ -150,6 +153,14 @@ public class ExecutedTask implements Serializable {
 
 	public void setScheduled(Boolean scheduled) {
 		this.scheduled = scheduled;
+	}
+
+	public Date getLastExecutionDate() {
+		return lastExecutionDate;
+	}
+
+	public void setLastExecutionDate(Date lastExecutionDate) {
+		this.lastExecutionDate = lastExecutionDate;
 	}
 
 }
