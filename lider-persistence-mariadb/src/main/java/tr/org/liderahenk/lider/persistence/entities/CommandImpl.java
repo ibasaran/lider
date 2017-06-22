@@ -98,6 +98,10 @@ public class CommandImpl implements ICommand {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "ACTIVATION_DATE", nullable = true)
 	private Date activationDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "EXPIRATION_DATE", nullable = true)
+	private Date expirationDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -110,7 +114,7 @@ public class CommandImpl implements ICommand {
 	}
 
 	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType, List<String> uidList,
-			String commandOwnerUid, Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
+			String commandOwnerUid, Date activationDate, Date expirationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
 		this.policy = (PolicyImpl) policy;
@@ -121,6 +125,7 @@ public class CommandImpl implements ICommand {
 		this.uidListJsonString = uidList != null ? mapper.writeValueAsString(uidList) : null;
 		this.commandOwnerUid = commandOwnerUid;
 		this.activationDate = activationDate;
+		this.expirationDate = expirationDate;
 		this.createDate = createDate;
 		this.commandExecutions = commandExecutions;
 	}
@@ -135,6 +140,7 @@ public class CommandImpl implements ICommand {
 		this.uidListJsonString = command.getUidList() != null ? mapper.writeValueAsString(command.getUidList()) : null;
 		this.commandOwnerUid = command.getCommandOwnerUid();
 		this.activationDate = command.getActivationDate();
+		this.expirationDate = command.getExpirationDate();
 		this.createDate = command.getCreateDate();
 
 		// Convert ICommandExecution to CommandExecutionImpl
@@ -252,6 +258,15 @@ public class CommandImpl implements ICommand {
 
 	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
+	}
+	
+	@Override
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 	@Override

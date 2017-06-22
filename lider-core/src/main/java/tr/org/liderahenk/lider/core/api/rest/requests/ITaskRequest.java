@@ -22,8 +22,6 @@ package tr.org.liderahenk.lider.core.api.rest.requests;
 import java.util.Date;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
-
 /**
  * Request class used for task creation/execution.
  * 

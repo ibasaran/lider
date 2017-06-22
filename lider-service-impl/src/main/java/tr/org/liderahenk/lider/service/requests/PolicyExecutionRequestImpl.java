@@ -45,18 +45,21 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 
 	private Date activationDate;
 
+	private Date expirationDate;
+
 	private Date timestamp;
 
 	public PolicyExecutionRequestImpl() {
 	}
 
 	public PolicyExecutionRequestImpl(Long id, List<String> dnList, DNType dnType, Date activationDate,
-			Date timestamp) {
+			Date expirationDate, Date timestamp) {
 		super();
 		this.id = id;
 		this.dnList = dnList;
 		this.dnType = dnType;
 		this.activationDate = activationDate;
+		this.expirationDate = expirationDate;
 		this.timestamp = timestamp;
 	}
 
@@ -94,6 +97,15 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 
 	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
+	}
+
+	@Override
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 	@Override

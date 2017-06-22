@@ -164,13 +164,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 	public ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid, List<String> uidList)
 			throws Exception {
 		return new CommandImpl(null, null, (TaskImpl) task, request.getDnList(), request.getDnType(), uidList,
-				commandOwnerJid, ((ITaskRequest) request).getActivationDate(), new Date(), null);
+				commandOwnerJid, ((ITaskRequest) request).getActivationDate(), null, new Date(), null);
 	}
 
 	@Override
 	public ICommand createCommand(IPolicy policy, ICommandRequest request, String commandOwnerJid) throws Exception {
 		return new CommandImpl(null, (PolicyImpl) policy, null, request.getDnList(), request.getDnType(), null,
-				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(), new Date(), null);
+				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(), ((IPolicyExecutionRequest) request).getExpirationDate(), new Date(), null);
 	}
 
 	@Override

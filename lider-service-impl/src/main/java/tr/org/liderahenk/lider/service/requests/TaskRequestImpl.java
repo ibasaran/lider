@@ -74,8 +74,8 @@ public class TaskRequestImpl implements ITaskRequest {
 	private String cronExpression;
 
 	/**
-	 * Optional parameter which can be used to activate the task on this date.
-	 * (Task will be sent to agents on this date)
+	 * Optional parameter which can be used to activate the task or policy on
+	 * this date. (Task will be sent to agents on this date)
 	 */
 	private Date activationDate;
 
@@ -83,8 +83,7 @@ public class TaskRequestImpl implements ITaskRequest {
 	 * Timestamp of the request
 	 */
 	private Date timestamp;
-	
-	
+
 	private String owner;
 
 	public TaskRequestImpl() {
@@ -201,7 +200,7 @@ public class TaskRequestImpl implements ITaskRequest {
 
 	@Override
 	public void setOwner(String owner) {
-		this.owner=owner;
+		this.owner = owner;
 	}
 
 }

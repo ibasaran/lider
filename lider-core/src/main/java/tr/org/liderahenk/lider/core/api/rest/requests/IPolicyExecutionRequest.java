@@ -32,4 +32,6 @@ public interface IPolicyExecutionRequest extends ICommandRequest {
 	Long getId();
 
 	Date getActivationDate();
+
+	Date getExpirationDate();
 }
