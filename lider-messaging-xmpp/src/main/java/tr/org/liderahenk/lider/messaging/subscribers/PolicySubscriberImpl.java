@@ -20,6 +20,7 @@
 package tr.org.liderahenk.lider.messaging.subscribers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -77,9 +78,11 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		List<Object[]> resultList = policyDao.getLatestUserPolicy(userUid, groupsOfUser);
 		IPolicy userPolicy = null;
 		Long userCommandExecutionId = null;
+		Date userExpirationDate = null;
 		if (resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length == 2) {
 			userPolicy = (IPolicy) resultList.get(0)[0];
 			userCommandExecutionId = (Long) resultList.get(0)[1];
+			userExpirationDate = (Date) resultList.get(0)[2];
 		}
 		// If policy version is different than the policy version provided by
 		// user who is logged in, send its profiles to agent.
@@ -90,9 +93,11 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		resultList = policyDao.getLatestAgentPolicy(agentUid);
 		IPolicy agentPolicy = null;
 		Long agentCommandExecutionId = null;
+		Date agentExpirationDate = null;
 		if (resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length == 2) {
 			agentPolicy = (IPolicy) resultList.get(0)[0];
 			agentCommandExecutionId = (Long) resultList.get(0)[1];
+			agentExpirationDate = (Date) resultList.get(0)[2];
 		}
 		// If policy version is different than the policy version provided by
 		// agent, send its profiles to agent.
@@ -122,8 +127,10 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		IExecutePoliciesMessage response = messageFactory.createExecutePoliciesMessage(null, userUid,
 				sendUserPolicy ? new ArrayList<IProfile>(userPolicy.getProfiles()) : null,
 				userPolicy != null ? userPolicy.getPolicyVersion() : null, userCommandExecutionId,
+				sendUserPolicy ? userExpirationDate : null,
 				sendAgentPolicy ? new ArrayList<IProfile>(agentPolicy.getProfiles()) : null,
 				agentPolicy != null ? agentPolicy.getPolicyVersion() : null, agentCommandExecutionId,
+				sendAgentPolicy ? agentExpirationDate : null,
 				usesFileTransfer ? configurationService.getFileServerConf(agentUid) : null);
 		logger.debug("Execute policies message: {}", response);
 		return response;

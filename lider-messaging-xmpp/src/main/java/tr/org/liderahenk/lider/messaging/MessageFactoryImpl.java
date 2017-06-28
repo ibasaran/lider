@@ -93,11 +93,11 @@ public class MessageFactoryImpl implements IMessageFactory {
 	@Override
 	public IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
 			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
-			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId,
-			FileServerConf fileServerConf) {
+			Date userPolicyExpirationDate, List<IProfile> agentPolicyProfiles, String agentPolicyVersion, 
+			Long agentCommandExecutionId, Date agentPolicyExpirationDate, FileServerConf fileServerConf) {
 		return new ExecutePoliciesMessageImpl(recipient, username, userPolicyProfiles, userPolicyVersion,
-				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date(),
-				fileServerConf);
+				userCommandExecutionId, userPolicyExpirationDate, agentPolicyProfiles, agentPolicyVersion, 
+				agentCommandExecutionId, agentPolicyExpirationDate, new Date(), fileServerConf);
 	}
 
 	@Override

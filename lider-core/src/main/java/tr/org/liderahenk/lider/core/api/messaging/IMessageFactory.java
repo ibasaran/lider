@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.core.api.messaging;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -76,8 +77,8 @@ public interface IMessageFactory {
 	 */
 	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
 			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
-			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId,
-			FileServerConf fileServerConf);
+			Date userPolicyExpirationDate, List<IProfile> agentPolicyProfiles, String agentPolicyVersion,
+			Long agentCommandExecutionId, Date agentPolicyExpirationDate, FileServerConf fileServerConf);
 
 	/**
 	 * Create plugin not found message for specified plugin name-version

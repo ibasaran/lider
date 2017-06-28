@@ -55,27 +55,33 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	private Long userCommandExecutionId;
 
+	private Date userPolicyExpirationDate;
+
 	private List<IProfile> agentPolicyProfiles;
 
 	private String agentPolicyVersion;
 
 	private Long agentCommandExecutionId;
 
+	private Date agentPolicyExpirationDate;
+
 	private Date timestamp;
 
 	private FileServerConf fileServerConf;
 
 	public ExecutePoliciesMessageImpl(String recipient, String username, List<IProfile> userPolicyProfiles,
-			String userPolicyVersion, Long userCommandExecutionId, List<IProfile> agentPolicyProfiles,
-			String agentPolicyVersion, Long agentCommandExecutionId, Date timestamp, FileServerConf fileServerConf) {
+			String userPolicyVersion, Long userCommandExecutionId, Date userPolicyExpirationDate, List<IProfile> agentPolicyProfiles,
+			String agentPolicyVersion, Long agentCommandExecutionId, Date agentPolicyExpirationDate, Date timestamp, FileServerConf fileServerConf) {
 		this.recipient = recipient;
 		this.username = username;
 		this.userPolicyProfiles = userPolicyProfiles;
 		this.userPolicyVersion = userPolicyVersion;
+		this.userPolicyExpirationDate = userPolicyExpirationDate;
 		this.userCommandExecutionId = userCommandExecutionId;
 		this.agentPolicyProfiles = agentPolicyProfiles;
 		this.agentPolicyVersion = agentPolicyVersion;
 		this.agentCommandExecutionId = agentCommandExecutionId;
+		this.agentPolicyExpirationDate = agentPolicyExpirationDate;
 		this.timestamp = timestamp;
 		this.fileServerConf = fileServerConf;
 	}
@@ -177,6 +183,24 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	public void setFileServerConf(FileServerConf fileServerConf) {
 		this.fileServerConf = fileServerConf;
+	}
+
+	@Override
+	public Date getUserPolicyExpirationDate() {
+		return userPolicyExpirationDate;
+	}
+
+	public void setUserPolicyExpirationDate(Date userPolicyExpirationDate) {
+		this.userPolicyExpirationDate = userPolicyExpirationDate;
+	}
+
+	@Override
+	public Date getAgentPolicyExpirationDate() {
+		return agentPolicyExpirationDate;
+	}
+
+	public void setAgentPolicyExpirationDate(Date agentPolicyExpirationDate) {
+		this.agentPolicyExpirationDate = agentPolicyExpirationDate;
 	}
 
 }

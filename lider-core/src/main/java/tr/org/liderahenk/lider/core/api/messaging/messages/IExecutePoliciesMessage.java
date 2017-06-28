@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.core.api.messaging.messages;
 
+import java.util.Date;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
@@ -83,5 +84,9 @@ public interface IExecutePoliciesMessage extends ILiderMessage {
 	 * @return configuration required to transfer file.
 	 */
 	FileServerConf getFileServerConf();
+
+	Date getUserPolicyExpirationDate();
+
+	Date getAgentPolicyExpirationDate();
 
 }

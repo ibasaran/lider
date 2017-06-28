@@ -190,12 +190,13 @@ public class PolicyDaoImpl implements IPolicyDao {
 	}
 
 	private static final String LATEST_USER_POLICY = 
-			"SELECT DISTINCT pol, ce.id " 
+			"SELECT DISTINCT pol, ce.id, c.expirationDate " 
 			+ "FROM CommandImpl c "
 			+ "INNER JOIN c.policy pol " 
 			+ "INNER JOIN c.commandExecutions ce "
 			+ "WHERE ((ce.uid = :sUid)##WHERE##) "
 			+ "AND (c.activationDate IS NULL OR c.activationDate < :today) "
+			+ "AND (c.expirationDate IS NULL OR c.expirationDate > :today) "
 			+ "AND pol.deleted = False "
 			+ "ORDER BY ce.createDate DESC";
 	private static final String GROUP_CONDITION = " OR (ce.dnType = :gDnType AND ce.dn IN :gDnList)";
@@ -241,12 +242,13 @@ public class PolicyDaoImpl implements IPolicyDao {
 	}
 
 	private static final String LATEST_MACHINE_POLICY = 
-			"SELECT DISTINCT pol, ce.id "
+			"SELECT DISTINCT pol, ce.id, c.expirationDate "
 			+ "FROM CommandImpl c "
 			+ "INNER JOIN c.policy pol "
 			+ "INNER JOIN c.commandExecutions ce "
 			+ "WHERE ce.uid = :uid "
 			+ "AND (c.activationDate IS NULL OR c.activationDate < :today) "
+			+ "AND (c.expirationDate IS NULL OR c.expirationDate > :today) "
 			+ "AND pol.deleted = False "
 			+ "ORDER BY ce.createDate DESC";
 
