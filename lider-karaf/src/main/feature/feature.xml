@@ -108,8 +108,14 @@
 		<bundle start-level="90">mvn:${groupId}/lider-script/1.0.0</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-script-db/1.0.0</bundle>
 
+		<!-- Use either USB or USB-LTSP plugin: -->
 		<configfile finalname="/etc/tr.org.liderahenk.usb.cfg" override="true">mvn:${groupId}/lider-usb/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-usb/1.0.0</bundle>
+
+		<!-- Use either USB or USB-LTSP plugin: -->
+		<configfile finalname="/etc/tr.org.liderahenk.usb.ltsp.cfg" override="true">mvn:${groupId}/lider-usb-ltsp/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:${groupId}/lider-usb-ltsp/1.0.0</bundle>
+		<bundle start-level="90">mvn:${groupId}/lider-usb-ltsp-db/1.0.0</bundle>
 
 		<configfile finalname="/etc/tr.org.liderahenk.user.privilege.cfg" override="true">mvn:${groupId}/lider-user-privilege/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-user-privilege/1.0.0</bundle>
