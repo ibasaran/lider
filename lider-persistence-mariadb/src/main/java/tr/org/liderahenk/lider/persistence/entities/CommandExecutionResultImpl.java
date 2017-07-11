@@ -89,12 +89,18 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
 
+	@Column(name = "MAIL_SUBJECT")
+	private String mailSubject;
+
+	@Column(name = "MAIL_CONTENT")
+	private String mailContent;
+
 	public CommandExecutionResultImpl() {
 	}
 
 	public CommandExecutionResultImpl(Long id, CommandExecutionImpl commandExecution, Long agentId,
 			StatusCode responseCode, String responseMessage, byte[] responseData, ContentType contentType,
-			Date createDate) {
+			Date createDate, String mailSubject, String mailContent) {
 		super();
 		this.id = id;
 		this.commandExecution = commandExecution;
@@ -104,6 +110,8 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		this.responseData = responseData;
 		setContentType(contentType);
 		this.createDate = createDate;
+		this.mailSubject = mailSubject;
+		this.mailContent = mailContent;
 	}
 
 	public CommandExecutionResultImpl(ICommandExecutionResult commandExecutionResult) {
@@ -117,6 +125,8 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		if (commandExecutionResult.getCommandExecution() instanceof CommandExecutionImpl) {
 			this.commandExecution = (CommandExecutionImpl) commandExecutionResult.getCommandExecution();
 		}
+		this.mailContent = commandExecutionResult.getMailContent();
+		this.mailSubject = commandExecutionResult.getMailSubject();
 	}
 
 	@Override
@@ -197,6 +207,24 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	@Override
+	public String getMailSubject() {
+		return mailSubject;
+	}
+
+	public void setMailSubject(String mailSubject) {
+		this.mailSubject = mailSubject;
+	}
+
+	@Override
+	public String getMailContent() {
+		return mailContent;
+	}
+
+	public void setMailContent(String mailContent) {
+		this.mailContent = mailContent;
 	}
 
 	@Override

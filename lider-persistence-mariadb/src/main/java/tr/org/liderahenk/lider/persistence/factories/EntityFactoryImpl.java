@@ -107,22 +107,22 @@ public class EntityFactoryImpl implements IEntityFactory {
 			ICommandExecution commandExecution, Long agentId) throws Exception {
 		byte[] data = new ObjectMapper().writeValueAsBytes(message.getResponseData());
 		return new CommandExecutionResultImpl(null, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date());
+				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(), null, null);
 	}
 
 	@Override
 	public ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message,
-			ICommandExecution commandExecution, Long agentId) throws Exception {
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) throws Exception {
 		byte[] data = new ObjectMapper().writeValueAsBytes(message.getResponseData());
 		return new CommandExecutionResultImpl(null, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date());
+				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(), mailSubject, mailContent);
 	}
 
 	@Override
 	public ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, byte[] data,
-			ICommandExecution commandExecution, Long agentId) {
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) {
 		return new CommandExecutionResultImpl(null, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date());
+				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(), mailSubject, mailContent);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class EntityFactoryImpl implements IEntityFactory {
 	 */
 	@Override
 	public ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, Long resultId,
-			ICommandExecution commandExecution, Long agentId) {
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) {
 		CommandExecutionImpl c = new CommandExecutionImpl();
 		c.setId(commandExecution.getId());
 		c.setDn(commandExecution.getDn());
@@ -138,7 +138,7 @@ public class EntityFactoryImpl implements IEntityFactory {
 		c.setDnType(commandExecution.getDnType());
 		c.setCommand((CommandImpl) commandExecution.getCommand());
 		return new CommandExecutionResultImpl(resultId, c, agentId, message.getResponseCode(),
-				message.getResponseMessage(), null, message.getContentType(), new Date());
+				message.getResponseMessage(), null, message.getContentType(), new Date(), mailSubject, mailContent);
 	}
 
 	@Override
@@ -164,13 +164,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 	public ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid, List<String> uidList)
 			throws Exception {
 		return new CommandImpl(null, null, (TaskImpl) task, request.getDnList(), request.getDnType(), uidList,
-				commandOwnerJid, ((ITaskRequest) request).getActivationDate(), null, new Date(), null);
+				commandOwnerJid, ((ITaskRequest) request).getActivationDate(), null, new Date(), null, false);
 	}
 
 	@Override
 	public ICommand createCommand(IPolicy policy, ICommandRequest request, String commandOwnerJid) throws Exception {
 		return new CommandImpl(null, (PolicyImpl) policy, null, request.getDnList(), request.getDnType(), null,
-				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(), ((IPolicyExecutionRequest) request).getExpirationDate(), new Date(), null);
+				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(), ((IPolicyExecutionRequest) request).getExpirationDate(), new Date(), null, false);
 	}
 
 	@Override
@@ -292,6 +292,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IAgent createAgent(IAgent agent) {
 		return new AgentImpl(agent);
+	}
+	
+	@Override
+	public ICommand createCommand(ICommand command, boolean sentMail) throws Exception {
+		CommandImpl c = new CommandImpl(command);
+		c.setSentMail(sentMail);
+		return c;
 	}
 
 	@Override

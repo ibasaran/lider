@@ -98,7 +98,7 @@ public class CommandImpl implements ICommand {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "ACTIVATION_DATE", nullable = true)
 	private Date activationDate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "EXPIRATION_DATE", nullable = true)
 	private Date expirationDate;
@@ -110,11 +110,15 @@ public class CommandImpl implements ICommand {
 	@OneToMany(mappedBy = "command", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<CommandExecutionImpl> commandExecutions = new ArrayList<CommandExecutionImpl>(); // bidirectional
 
+	@Column(name = "SENT_MAIL")
+	private boolean sentMail = false;
+
 	public CommandImpl() {
 	}
 
 	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType, List<String> uidList,
-			String commandOwnerUid, Date activationDate, Date expirationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
+			String commandOwnerUid, Date activationDate, Date expirationDate, Date createDate,
+			List<CommandExecutionImpl> commandExecutions, boolean sentMail)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
 		this.policy = (PolicyImpl) policy;
@@ -128,6 +132,7 @@ public class CommandImpl implements ICommand {
 		this.expirationDate = expirationDate;
 		this.createDate = createDate;
 		this.commandExecutions = commandExecutions;
+		this.sentMail = sentMail;
 	}
 
 	public CommandImpl(ICommand command) throws JsonGenerationException, JsonMappingException, IOException {
@@ -142,6 +147,7 @@ public class CommandImpl implements ICommand {
 		this.activationDate = command.getActivationDate();
 		this.expirationDate = command.getExpirationDate();
 		this.createDate = command.getCreateDate();
+		this.sentMail = command.isSentMail();
 
 		// Convert ICommandExecution to CommandExecutionImpl
 		List<? extends ICommandExecution> tmpCommandExecutions = command.getCommandExecutions();
@@ -259,7 +265,7 @@ public class CommandImpl implements ICommand {
 	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
 	}
-	
+
 	@Override
 	public Date getExpirationDate() {
 		return expirationDate;
@@ -276,6 +282,15 @@ public class CommandImpl implements ICommand {
 
 	public void setCommandExecutions(List<CommandExecutionImpl> commandExecutions) {
 		this.commandExecutions = commandExecutions;
+	}
+
+	@Override
+	public boolean isSentMail() {
+		return sentMail;
+	}
+
+	public void setSentMail(boolean sentMail) {
+		this.sentMail = sentMail;
 	}
 
 	@Override

@@ -65,6 +65,7 @@ import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
  * @see tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
  *
  */
+@SuppressWarnings("unchecked")
 public class CommandDaoImpl implements ICommandDao {
 
 	private static Logger logger = LoggerFactory.getLogger(CommandDaoImpl.class);
@@ -199,7 +200,6 @@ public class CommandDaoImpl implements ICommandDao {
 
 	private static final String FIND_EXECUTION = "SELECT DISTINCT ce FROM CommandImpl c INNER JOIN c.commandExecutions ce INNER JOIN c.task t WHERE ce.uid = :uid AND t.id = :taskId";
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public ICommandExecution findExecution(Long taskId, String uid) {
 		Query query = entityManager.createQuery(FIND_EXECUTION);
@@ -232,7 +232,6 @@ public class CommandDaoImpl implements ICommandDao {
 			+ "##WHERE## GROUP BY t ORDER BY t.createDate DESC";
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Object[]> findTaskCommand(String pluginName, Boolean onlyFutureTasks, Boolean onlyScheduledTasks,
 			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults) {
 		String sql = FIND_TASK_COMMAND_WITH_DETAILS;
@@ -302,7 +301,6 @@ public class CommandDaoImpl implements ICommandDao {
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
 			+ "##WHERE## GROUP BY p ORDER BY p.createDate DESC";
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd,
 			Integer status, Integer maxResults) {
@@ -329,7 +327,7 @@ public class CommandDaoImpl implements ICommandDao {
 		}
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.POLICY_PROCESSED.getId());
-		params.put("resp_warning", StatusCode.TASK_WARNING.getId());
+		params.put("resp_warning", StatusCode.POLICY_WARNING.getId());
 		params.put("resp_error", StatusCode.POLICY_ERROR.getId());
 
 		Query query = entityManager.createQuery(sql);
@@ -359,11 +357,15 @@ public class CommandDaoImpl implements ICommandDao {
 		return resultList;
 	}
 
-	private static final String FIND_TASK_COMMANDS = "SELECT DISTINCT c " + "FROM CommandImpl c "
-			+ "LEFT JOIN c.commandExecutions ce " + "LEFT JOIN ce.commandExecutionResults cer " + "INNER JOIN c.task t "
-			+ "INNER JOIN t.plugin p " + "ORDER BY t.createDate DESC";
+	private static final String FIND_TASK_COMMANDS = 
+			"SELECT DISTINCT c " 
+			+ "FROM CommandImpl c "
+			+ "LEFT JOIN c.commandExecutions ce " 
+			+ "LEFT JOIN ce.commandExecutionResults cer " 
+			+ "INNER JOIN c.task t "
+			+ "INNER JOIN t.plugin p " 
+			+ "ORDER BY t.createDate DESC";
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<? extends ICommand> findTaskCommands(Integer maxResults) {
 		Query query = entityManager.createQuery(FIND_TASK_COMMANDS, CommandImpl.class);
@@ -381,6 +383,24 @@ public class CommandDaoImpl implements ICommandDao {
 		return resultImpl;
 	}
 
+	
+	private static final String FIND_TASK_COMMANDS_WITH_MAIL_NOTIFICATION = 
+			"SELECT DISTINCT c "
+			+ "FROM CommandImpl c "
+			+ "INNER JOIN c.commandExecutions ce "
+			+ "INNER JOIN ce.commandExecutionResults cer "
+			+ "INNER JOIN c.task t "
+			+ "INNER JOIN t.plugin p "
+			+ "WHERE c.sentMail = False AND cer.responseCode IN ( :taskEndingStates ) "
+			+ "ORDER BY t.createDate DESC";
+	
+	@Override
+	public List<? extends ICommand> findTaskCommandsWithMailNotification() {
+		Query query = entityManager.createQuery(FIND_TASK_COMMANDS_WITH_MAIL_NOTIFICATION);
+		query.setParameter("taskEndingStates", StatusCode.getTaskEndingStateIds());
+		return (List<CommandImpl>) query.getResultList();
+	}
+	
 	/**
 	 * 
 	 * @param tokens
