@@ -270,6 +270,17 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		if (message != null) {
 			logger.debug("Task manager received message from {}", message.getFrom());
 			String jid = message.getFrom().split("@")[0];
+			
+			String mailSubject = null;
+			String mailContent = null;
+			
+			try {
+				Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
+				mailSubject = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_subject") : null);
+				mailContent = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_content") : null);
+			} catch (Exception e1) {
+				logger.error(e1.getMessage(), e1);
+			}
 
 			// Find related agent
 			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", jid, 1);
@@ -297,10 +308,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 								configurationService.getFileServerPassword(), filePath, "/tmp/lider");
 
 						result = entityFactory.createCommandExecutionResult(message, data, commandExecution,
-								agent.getId());
+								agent.getId(), mailSubject, mailContent);
 					} else {
 						// Create new command execution result
-						result = entityFactory.createCommandExecutionResult(message, commandExecution, agent.getId());
+						result = entityFactory.createCommandExecutionResult(message, commandExecution, agent.getId(), mailSubject, mailContent);
 					}
 					commandExecution.addCommandExecutionResult(result);
 
@@ -319,7 +330,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 								// Instead, Lider Console can query the file by
 								// its result ID.
 								result = entityFactory.createCommandExecutionResult(message, result.getId(),
-										commandExecution, agent.getId());
+										commandExecution, agent.getId(), mailSubject, mailContent);
 							} else {
 								logger.info("Sending the result with data!");
 							}
