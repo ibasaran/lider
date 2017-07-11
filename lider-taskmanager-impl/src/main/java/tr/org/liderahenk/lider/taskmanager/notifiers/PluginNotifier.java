@@ -19,27 +19,16 @@
 */
 package tr.org.liderahenk.lider.taskmanager.notifiers;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.mail.IMailService;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
-import tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IMailAddress;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 
@@ -54,9 +43,6 @@ import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 public class PluginNotifier implements EventHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(PluginNotifier.class);
-
-	private IMailService mailService;
-	private IMailAddressDao mailAddressDao;
 
 	/**
 	 * A map to store all available commands. Key format of the key is as
@@ -119,8 +105,6 @@ public class PluginNotifier implements EventHandler {
 		ITask task = result.getCommandExecution().getCommand().getTask();
 		String key = buildKey(task.getPlugin().getName(), task.getPlugin().getVersion(), task.getCommandClsId());
 
-		sendMail(result, task); 
-
 		ITaskAwareCommand subscriber = subscribers != null ? subscribers.get(key.toUpperCase(Locale.ENGLISH)) : null;
 		if (subscriber != null) {
 			try {
@@ -133,71 +117,6 @@ public class PluginNotifier implements EventHandler {
 
 		logger.info("Handled task status.");
 
-	}
-
-	private void sendMail(ICommandExecutionResult result, ITask task) {
-		byte[] data = result.getResponseData();
-
-		if (data != null) {
-			Map<String, Object> responseData;
-			try {
-				responseData = new ObjectMapper().readValue(data, 0, data.length,
-						new TypeReference<HashMap<String, Object>>() {
-						});
-
-				if (responseData != null) {
-
-					Boolean mail_send = (Boolean) responseData.get("mail_send");
-
-					if (mail_send != null && mail_send) {
-
-						String mail_subject = (String) responseData.get("mail_subject");
-						String mail_content = (String) responseData.get("mail_content");
-
-						if (mail_subject != null && mail_content != null) {
-
-							List<? extends IMailAddress> mailAddressList = getMailAddressDao()
-									.findByProperty(IMailAddress.class, "plugin.id", task.getPlugin().getId(), 0);
-
-							List<String> toList = new ArrayList<String>();
-							for (IMailAddress iMailAddress : mailAddressList) {
-								toList.add(iMailAddress.getMailAddress());
-							}
-							if (toList.size() > 0)
-								getMailService().sendMail(toList, mail_subject, mail_content);
-
-						}
-					}
-				}
-
-			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	}
-
-	public IMailService getMailService() {
-		return mailService;
-	}
-
-	public void setMailService(IMailService mailService) {
-		this.mailService = mailService;
-	}
-
-	public IMailAddressDao getMailAddressDao() {
-		return mailAddressDao;
-	}
-
-	public void setMailAddressDao(IMailAddressDao mailAddressDao) {
-		this.mailAddressDao = mailAddressDao;
 	}
 
 }

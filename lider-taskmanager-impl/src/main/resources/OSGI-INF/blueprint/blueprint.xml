@@ -37,10 +37,16 @@
 	</service>
 	<bean id="pluginNotifier"
 		class="tr.org.liderahenk.lider.taskmanager.notifiers.PluginNotifier">
-		
+	</bean>
+
+	<bean id="mailNotifier"
+		class="tr.org.liderahenk.lider.taskmanager.notifiers.MailNotifier"
+		init-method="init" destroy-method="destroy">
 		<property name="mailService" ref="mailService" />
 		<property name="mailAddressDao" ref="mailAddressDao" />
-		
+		<property name="commandDao" ref="commandDao" />
+		<property name="configurationService" ref="configurationService" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 	
 	<!-- Task status notifier for Lider Console -->
