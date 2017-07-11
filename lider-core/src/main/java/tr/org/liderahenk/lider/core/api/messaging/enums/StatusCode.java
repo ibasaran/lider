@@ -78,6 +78,10 @@ public enum StatusCode {
 	public static List<StatusCode> getTaskEndingStates() {
 		return Arrays.asList(new StatusCode[] { TASK_PROCESSED, TASK_WARNING, TASK_ERROR, TASK_KILLED });
 	}
+	
+	public static List<String> getTaskEndingStateIds() {
+		return Arrays.asList(new String[] { new Integer(TASK_PROCESSED.getId()).toString(), new Integer(TASK_WARNING.getId()).toString(), new Integer(TASK_ERROR.getId()).toString(), new Integer(TASK_KILLED.getId()).toString() });
+	}
 
 	public static List<StatusCode> getPolicyEndingStates() {
 		return Arrays.asList(new StatusCode[] { POLICY_PROCESSED, POLICY_WARNING, POLICY_ERROR, POLICY_KILLED });

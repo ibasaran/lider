@@ -391,4 +391,8 @@ public interface IConfigurationService {
 	 */
 	String getHotDeploymentPath();
 
+	Boolean getMailSendOnTaskCompletion();
+
+	Long getMailCheckTaskCompletionPeriod();
+
 }

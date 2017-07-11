@@ -73,4 +73,8 @@ public interface ICommandExecutionResult extends IEntity {
 	 */
 	String toJson();
 
+	String getMailSubject();
+
+	String getMailContent();
+
 }

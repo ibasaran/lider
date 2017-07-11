@@ -161,4 +161,6 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 */
 	ICommandExecutionResult findExecutionResult(Long id);
 
+	List<? extends ICommand> findTaskCommandsWithMailNotification();
+
 }

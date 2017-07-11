@@ -89,7 +89,7 @@ public interface IEntityFactory {
 	 * @throws Exception
 	 */
 	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, ICommandExecution commandExecution,
-			Long agentId) throws Exception;
+			Long agentId, String mailSubject, String mailContent) throws Exception;
 
 	/**
 	 * 
@@ -100,7 +100,7 @@ public interface IEntityFactory {
 	 * @return
 	 */
 	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, byte[] data,
-			ICommandExecution commandExecution, Long agentId);
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent);
 
 	/**
 	 * 
@@ -299,13 +299,15 @@ public interface IEntityFactory {
 	IAgreementStatus createAgreementStatus(IAgent agent, String username, String md5, boolean accepted);
 
 	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, Long resultId,
-			ICommandExecution commandExecution, Long agentId);
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent);
 
 	ITask createTask(ITask task, String cronExpression);
 
 	IMailContent createMailContent(IPlugin plugin, IMailContent content);
 
 	IMailAddress createMailAddress(IPlugin plugin, IMailAddress mailAddress);
+
+	ICommand createCommand(ICommand command, boolean sentMail) throws Exception;
 
 
 }
