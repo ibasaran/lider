@@ -68,6 +68,9 @@
 		<property name="mailSmtpTimeout" value="${mail.smtp.timeout}" />
 		<property name="mailSmtpWriteTimeout" value="${mail.smtp.writetimeout}" />
 		
+		<property name="mailSendOnTaskCompletion" value="${mail.send.on.task.completion}" />
+		<property name="mailCheckTaskCompletionPeriod" value="${mail.check.task.completion.period}" />
+		
 		<property name="hotDeploymentPath" value="${hot.deployment.path}" />
 		
 		<property name="fileServerProtocol" value="${file.server.protocol}" />

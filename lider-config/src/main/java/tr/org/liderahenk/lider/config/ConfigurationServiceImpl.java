@@ -108,6 +108,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Integer mailSmtpTimeout;
 	private Integer mailSmtpWriteTimeout;
 
+	private Boolean mailSendOnTaskCompletion;
+	private Long mailCheckTaskCompletionPeriod;
+
 	// Hot deployment configuration
 	private String hotDeploymentPath;
 
@@ -150,12 +153,14 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ mailHost + ", mailSmtpPort=" + mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth
 				+ ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable + ", mailSmtpSslEnable=" + mailSmtpSslEnable
 				+ ", mailSmtpConnTimeout=" + mailSmtpConnTimeout + ", mailSmtpTimeout=" + mailSmtpTimeout
-				+ ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout + ", hotDeploymentPath=" + hotDeploymentPath
-				+ ", fileServerProtocol=" + fileServerProtocol + ", fileServerHost=" + fileServerHost
-				+ ", fileServerUsername=" + fileServerUsername + ", fileServerPassword=" + fileServerPassword
-				+ ", fileServerPluginPath=" + fileServerPluginPath + ", fileServerAgreementPath="
-				+ fileServerAgreementPath + ", fileServerAgentFilePath=" + fileServerAgentFilePath + ", fileServerUrl="
-				+ fileServerUrl + ", fileServerPort=" + fileServerPort + "]";
+				+ ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout + ", mailSendOnTaskCompletion="
+				+ mailSendOnTaskCompletion + ", mailCheckTaskCompletionPeriod=" + mailCheckTaskCompletionPeriod
+				+ ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol=" + fileServerProtocol
+				+ ", fileServerHost=" + fileServerHost + ", fileServerUsername=" + fileServerUsername
+				+ ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath=" + fileServerPluginPath
+				+ ", fileServerAgreementPath=" + fileServerAgreementPath + ", fileServerAgentFilePath="
+				+ fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl + ", fileServerPort=" + fileServerPort
+				+ "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -569,6 +574,24 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setMailSmtpWriteTimeout(Integer mailSmtpWriteTimeout) {
 		this.mailSmtpWriteTimeout = mailSmtpWriteTimeout;
+	}
+
+	@Override
+	public Boolean getMailSendOnTaskCompletion() {
+		return mailSendOnTaskCompletion;
+	}
+
+	public void setMailSendOnTaskCompletion(Boolean mailSendOnTaskCompletion) {
+		this.mailSendOnTaskCompletion = mailSendOnTaskCompletion;
+	}
+
+	@Override
+	public Long getMailCheckTaskCompletionPeriod() {
+		return mailCheckTaskCompletionPeriod;
+	}
+
+	public void setMailCheckTaskCompletionPeriod(Long mailCheckTaskCompletionPeriod) {
+		this.mailCheckTaskCompletionPeriod = mailCheckTaskCompletionPeriod;
 	}
 
 	@Override
