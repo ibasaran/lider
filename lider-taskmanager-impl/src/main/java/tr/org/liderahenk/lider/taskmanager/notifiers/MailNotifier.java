@@ -21,7 +21,6 @@ package tr.org.liderahenk.lider.taskmanager.notifiers;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -81,19 +80,12 @@ public class MailNotifier {
 				for (ICommand command : commands) {
 					try {
 						// Build mail to_list
-						// List<? extends IMailAddress> mailAddressList =
-						// mailAddressDao.findByProperty(IMailAddress.class,
-						// "plugin.id", command.getTask().getPlugin().getId(),
-						// 0);
-						// List<String> toList = new ArrayList<String>();
-						// for (IMailAddress iMailAddress : mailAddressList) {
-						// toList.add(iMailAddress.getMailAddress());
-						// }
-
-						logger.warn("COMMAND: " + command.toString());
-
-						List<String> toList = Arrays
-								.asList(new String[] { "emre.akkaya@agem.com.tr", "volkan.sahin@agem.com.tr" });
+						List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(IMailAddress.class,
+								"plugin.id", command.getTask().getPlugin().getId(), 0);
+						List<String> toList = new ArrayList<String>();
+						for (IMailAddress iMailAddress : mailAddressList) {
+							toList.add(iMailAddress.getMailAddress());
+						}
 
 						// Get mail_subject
 						String mailSubject = "";
@@ -134,10 +126,10 @@ public class MailNotifier {
 
 							// Send mail
 							if (hasContent) {
-								mailSubject = "Lider Ahenk Görev Sonucu" + mailSubject;
+								mailSubject = "Lider Ahenk Görev Sonucu " + mailSubject;
 								mailService.sendMail(toList, mailSubject,
 										mailContent.toString().replaceFirst("ONLINE_AGENTS", onlineAgents + "")
-										.replaceFirst("OFFLINE_AGENTS", offlineAgents + ""));
+												.replaceFirst("OFFLINE_AGENTS", offlineAgents + ""));
 							}
 
 							// Mark command as 'sent mail'
