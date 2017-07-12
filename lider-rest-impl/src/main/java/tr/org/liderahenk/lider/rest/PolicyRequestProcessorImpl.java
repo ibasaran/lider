@@ -101,7 +101,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 					boolean isUser = ldapService.isUser(targetEntry);
 					String uid = isAhenk ? targetEntry.get(configService.getAgentLdapJidAttribute())
 							: (isUser ? targetEntry.get(configService.getUserLdapUidAttribute()) : null);
-					command.addCommandExecution(entityFactory.createCommandExecution(targetEntry, command, uid));
+					command.addCommandExecution(entityFactory.createCommandExecution(targetEntry, command, uid, false));
 				}
 			}
 

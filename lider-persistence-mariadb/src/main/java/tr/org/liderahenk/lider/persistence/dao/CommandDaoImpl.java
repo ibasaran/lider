@@ -389,10 +389,8 @@ public class CommandDaoImpl implements ICommandDao {
 			+ "FROM CommandImpl c "
 			+ "INNER JOIN c.commandExecutions ce "
 			+ "INNER JOIN ce.commandExecutionResults cer "
-			+ "INNER JOIN c.task t "
-			+ "INNER JOIN t.plugin p "
-			+ "WHERE c.sentMail = False AND cer.responseCode IN ( :taskEndingStates ) "
-			+ "ORDER BY t.createDate DESC";
+			+ "WHERE c.sentMail = False AND ce.online = True AND cer.responseCode IN ( :taskEndingStates ) "
+			+ "ORDER BY c.createDate DESC";
 	
 	@Override
 	public List<? extends ICommand> findTaskCommandsWithMailNotification() {

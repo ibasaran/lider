@@ -155,9 +155,9 @@ public class EntityFactoryImpl implements IEntityFactory {
 	}
 
 	@Override
-	public ICommandExecution createCommandExecution(LdapEntry entry, ICommand command, String uid) {
+	public ICommandExecution createCommandExecution(LdapEntry entry, ICommand command, String uid, boolean isOnline) {
 		return new CommandExecutionImpl(null, (CommandImpl) command, uid, entry.getType(), entry.getDistinguishedName(),
-				new Date(), null);
+				new Date(), null, isOnline);
 	}
 
 	@Override

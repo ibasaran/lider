@@ -21,6 +21,7 @@ package tr.org.liderahenk.lider.taskmanager.notifiers;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,35 +81,49 @@ public class MailNotifier {
 				for (ICommand command : commands) {
 					try {
 						// Build mail to_list
-						List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(IMailAddress.class,
-								"plugin.id", command.getTask().getPlugin().getId(), 0);
-						List<String> toList = new ArrayList<String>();
-						for (IMailAddress iMailAddress : mailAddressList) {
-							toList.add(iMailAddress.getMailAddress());
-						}
+						// List<? extends IMailAddress> mailAddressList =
+						// mailAddressDao.findByProperty(IMailAddress.class,
+						// "plugin.id", command.getTask().getPlugin().getId(),
+						// 0);
+						// List<String> toList = new ArrayList<String>();
+						// for (IMailAddress iMailAddress : mailAddressList) {
+						// toList.add(iMailAddress.getMailAddress());
+						// }
+
+						logger.warn("COMMAND: " + command.toString());
+
+						List<String> toList = Arrays
+								.asList(new String[] { "emre.akkaya@agem.com.tr", "volkan.sahin@agem.com.tr" });
 
 						// Get mail_subject
-						String mailSubject = getMailSubject(command);
+						String mailSubject = "";
 						StringBuilder mailContent = new StringBuilder();
 
 						int totalAgents = command.getUidList().size();
-						int totalAccessibleAgents = command.getCommandExecutions().size();
+						int onlineAgents = 0, offlineAgents = 0;
+						boolean hasContent = false;
 
 						mailContent.append(command.getTask().getPlugin().getDescription()).append(" eklentisi ")
 								.append(format.format(command.getCreateDate())).append(" tarihinde ")
 								.append(command.getTask().getCommandClsId()).append(" görevi göndermiştir. \n")
 								.append("Görev toplam ").append(totalAgents)
-								.append(" adet istemci için çalıştırılmıştır. \n").append("Görev toplam ")
-								.append(totalAccessibleAgents).append(" adet istemciye ulaşmıştır. \n")
-								.append("Görev toplam ").append(totalAgents - totalAccessibleAgents)
-								.append(" adet istemciye ulaşmamıştır. \n")
-								.append("Görev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
+								.append(" adet istemci için çalıştırılmıştır. \nGörev toplam ONLINE_AGENTS adet istemciye ulaşmıştır. \nGörev toplam OFFLINE_AGENTS adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
 
 						if (toList.size() > 0) {
 							for (ICommandExecution execution : command.getCommandExecutions()) {
+								if (!execution.isOnline()) {
+									offlineAgents++;
+									continue;
+								}
+								onlineAgents++;
 								for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
+									if (mailSubject.isEmpty() && result.getMailSubject() != null
+											&& !result.getMailSubject().isEmpty()) {
+										mailSubject = result.getMailSubject();
+									}
 									if (StatusCode.getTaskEndingStates().contains(result.getResponseCode())
 											&& result.getMailContent() != null && !result.getMailContent().isEmpty()) {
+										hasContent = true;
 										mailContent.append("\nAhenk: ").append(execution.getUid()).append(", Sonuç: ")
 												.append(result.getResponseCode().toString()).append(", Mesaj:")
 												.append(result.getMailContent());
@@ -118,7 +133,12 @@ public class MailNotifier {
 							}
 
 							// Send mail
-							mailService.sendMail(toList, mailSubject, mailContent.toString());
+							if (hasContent) {
+								mailSubject = "Lider Ahenk Görev Sonucu" + mailSubject;
+								mailService.sendMail(toList, mailSubject,
+										mailContent.toString().replaceFirst("ONLINE_AGENTS", onlineAgents + "")
+										.replaceFirst("OFFLINE_AGENTS", offlineAgents + ""));
+							}
 
 							// Mark command as 'sent mail'
 							// So that the notifier may ignore it from now on.
@@ -129,14 +149,6 @@ public class MailNotifier {
 					}
 				}
 			}
-		}
-
-		private String getMailSubject(ICommand command) {
-			// TODO instead of returning first 'mail subject' of a task
-			// result, a better solution would be to get the subject from
-			// plugin.
-			String subject = command.getCommandExecutions().get(0).getCommandExecutionResults().get(0).getMailSubject();
-			return subject != null && !subject.isEmpty() ? subject : "Lider Ahenk Görev Sonucu";
 		}
 	}
 

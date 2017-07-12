@@ -128,10 +128,9 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				logger.info("Future task received. It will be executed on its activation date.");
 				return;
 			}
-			
-			
-			sendMail(request, plugin, task,entries);
-			
+
+			sendMail(request, plugin, task, entries);
+
 			// Otherwise handle task
 			handleTaskExecution(task, command, plugin.isUsesFileTransfer(), entries);
 
@@ -144,45 +143,46 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		}
 	}
 
-	private void sendMail(final ITaskRequest request, final IPlugin plugin, ITask task,List<LdapEntry> entries) {
+	private void sendMail(final ITaskRequest request, final IPlugin plugin, ITask task, List<LdapEntry> entries) {
 		Boolean mailSend = (Boolean) request.getParameterMap().get("mailSend");
-		
-		if(mailSend!=null && mailSend){
-			
-//					String mail_subject = (String) request.getParameterMap().get("mail_subject");
-//					String mail_content = (String) request.getParameterMap().get("mail_content");
-				List<LdapEntry> onlineEntries = new ArrayList<LdapEntry>();
-				List<LdapEntry> offlineEntries= new ArrayList<LdapEntry>();
-				String offlineEntriesStr="";
-				for (LdapEntry ldapEntry : entries) {
-					String uid= ldapEntry.get("uid");
-					ldapEntry.setOnline(messagingService.isRecipientOnline(getFullJid(uid)));
-					if(ldapEntry.isOnline()) onlineEntries.add(ldapEntry);
-					else { 
-						offlineEntries.add(ldapEntry);
-						offlineEntriesStr += ldapEntry.getDistinguishedName() + " ";
-					}
-				}
-				String mailSubject = "Lider Ahenk Görevi";
-				String mailContent = plugin.getDescription() + " eklentisi"+ new SimpleDateFormat("dd-MM-yyyy H:m").format(new Date()) +" tarihinde "
-				+ request.getCommandId() +  " görevi göndermiştir. \n";
-				mailContent +="Görev toplam " + onlineEntries.size() +" adet istemciye ulaşmıştır. \n";
-				mailContent +="Görev toplam " + offlineEntries.size() +" adet istemciye ulaşmamıştır. \n";
-				mailContent += "Görev ulaşmayan istemciler : " + offlineEntriesStr; 
-				
-				if (mailSubject != null && mailContent != null) {
 
-					List<? extends IMailAddress> mailAddressList = getMailAddressDao().findByProperty(IMailAddress.class, "plugin.id", task.getPlugin().getId(), 0);
+		if (mailSend != null && mailSend) {
 
-					List<String> toList = new ArrayList<String>();
-					for (IMailAddress iMailAddress : mailAddressList) {
-						toList.add(iMailAddress.getMailAddress());
-					}
-					if (toList.size() > 0)
-						getMailService().sendMail(toList, mailSubject, mailContent);
-
+			List<LdapEntry> onlineEntries = new ArrayList<LdapEntry>();
+			List<LdapEntry> offlineEntries = new ArrayList<LdapEntry>();
+			String offlineEntriesStr = "";
+			for (LdapEntry ldapEntry : entries) {
+				String uid = ldapEntry.get("uid");
+				ldapEntry.setOnline(messagingService.isRecipientOnline(getFullJid(uid)));
+				if (ldapEntry.isOnline())
+					onlineEntries.add(ldapEntry);
+				else {
+					offlineEntries.add(ldapEntry);
+					offlineEntriesStr += ldapEntry.getDistinguishedName() + " ";
 				}
 			}
+			String mailSubject = "Lider Ahenk Görevi";
+			String mailContent = plugin.getDescription() + " eklentisi"
+					+ new SimpleDateFormat("dd-MM-yyyy H:m").format(new Date()) + " tarihinde " + request.getCommandId()
+					+ " görevi göndermiştir. \n";
+			mailContent += "Görev toplam " + onlineEntries.size() + " adet istemciye ulaşmıştır. \n";
+			mailContent += "Görev toplam " + offlineEntries.size() + " adet istemciye ulaşmamıştır. \n";
+			mailContent += "Görev ulaşmayan istemciler : " + offlineEntriesStr;
+
+			if (mailSubject != null && mailContent != null) {
+
+				List<? extends IMailAddress> mailAddressList = getMailAddressDao().findByProperty(IMailAddress.class,
+						"plugin.id", task.getPlugin().getId(), 0);
+
+				List<String> toList = new ArrayList<String>();
+				for (IMailAddress iMailAddress : mailAddressList) {
+					toList.add(iMailAddress.getMailAddress());
+				}
+				if (toList.size() > 0)
+					getMailService().sendMail(toList, mailSubject, mailContent);
+
+			}
+		}
 	}
 
 	public String getFullJid(String jid) {
@@ -192,6 +192,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		}
 		return jidFinal;
 	}
+
 	private List<String> buildUidList(List<LdapEntry> entries) {
 		List<String> uidList = new ArrayList<String>();
 		for (LdapEntry entry : entries) {
@@ -223,7 +224,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				logger.info("DN type: {}, UID: {}", entry.getType().toString(), uid);
 
 				// New command execution
-				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid);
+				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid, messagingService.isRecipientOnline(getFullJid(uid)));
 				command.addCommandExecution(execution);
 
 				// Task message
@@ -270,14 +271,16 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		if (message != null) {
 			logger.debug("Task manager received message from {}", message.getFrom());
 			String jid = message.getFrom().split("@")[0];
-			
+
 			String mailSubject = null;
 			String mailContent = null;
-			
+
 			try {
 				Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
-				mailSubject = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_subject") : null);
-				mailContent = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_content") : null);
+				mailSubject = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_subject")
+						: null);
+				mailContent = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_content")
+						: null);
 			} catch (Exception e1) {
 				logger.error(e1.getMessage(), e1);
 			}
@@ -311,7 +314,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 								agent.getId(), mailSubject, mailContent);
 					} else {
 						// Create new command execution result
-						result = entityFactory.createCommandExecutionResult(message, commandExecution, agent.getId(), mailSubject, mailContent);
+						result = entityFactory.createCommandExecutionResult(message, commandExecution, agent.getId(),
+								mailSubject, mailContent);
 					}
 					commandExecution.addCommandExecutionResult(result);
 

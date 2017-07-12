@@ -132,7 +132,7 @@ public interface IEntityFactory {
 	 * @param command
 	 * @return
 	 */
-	ICommandExecution createCommandExecution(LdapEntry entry, ICommand command, String uid);
+	ICommandExecution createCommandExecution(LdapEntry entry, ICommand command, String uid, boolean isOnline);
 
 	/**
 	 * 

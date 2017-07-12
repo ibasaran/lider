@@ -87,11 +87,15 @@ public class CommandExecutionImpl implements ICommandExecution {
 	@OrderBy("createDate DESC")
 	private List<CommandExecutionResultImpl> commandExecutionResults = new ArrayList<CommandExecutionResultImpl>(); // bidirectional
 
+	@Column(name = "ONLINE")
+	private boolean online; // True if the agent is online during the task
+							// execution, false otherwise
+
 	public CommandExecutionImpl() {
 	}
 
 	public CommandExecutionImpl(Long id, CommandImpl command, String uid, DNType dnType, String dn, Date createDate,
-			List<CommandExecutionResultImpl> commandExecutionResults) {
+			List<CommandExecutionResultImpl> commandExecutionResults, boolean online) {
 		this.id = id;
 		this.command = command;
 		this.uid = uid;
@@ -99,6 +103,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 		this.dn = dn;
 		this.createDate = createDate;
 		this.commandExecutionResults = commandExecutionResults;
+		this.online = online;
 	}
 
 	public CommandExecutionImpl(ICommandExecution commandExecution) {
@@ -107,6 +112,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 		setDnType(commandExecution.getDnType());
 		this.dn = commandExecution.getDn();
 		this.createDate = commandExecution.getCreateDate();
+		this.online = commandExecution.isOnline();
 
 		// Convert ICommandExecutionResult to CommandExecutionResultImpl
 		List<? extends ICommandExecutionResult> tmpCommandExecutionResults = commandExecution
@@ -207,6 +213,15 @@ public class CommandExecutionImpl implements ICommandExecution {
 	}
 
 	@Override
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
+	}
+
+	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -219,8 +234,8 @@ public class CommandExecutionImpl implements ICommandExecution {
 
 	@Override
 	public String toString() {
-		return "CommandExecutionImpl [id=" + id + ", dnType=" + dnType + ", dn=" + dn + ", commandExecutionResults="
-				+ commandExecutionResults + "]";
+		return "CommandExecutionImpl [id=" + id + ", uid=" + uid + ", dnType=" + dnType + ", dn=" + dn + ", createDate="
+				+ createDate + ", commandExecutionResults=" + commandExecutionResults + ", online=" + online + "]";
 	}
 
 }

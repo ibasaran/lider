@@ -313,7 +313,9 @@ public class CommandImpl implements ICommand {
 	@Override
 	public String toString() {
 		return "CommandImpl [id=" + id + ", dnListJsonString=" + dnListJsonString + ", dnType=" + dnType
-				+ ", createDate=" + createDate + ", commandExecutions=" + commandExecutions + "]";
+				+ ", uidListJsonString=" + uidListJsonString + ", commandOwnerUid=" + commandOwnerUid
+				+ ", activationDate=" + activationDate + ", expirationDate=" + expirationDate + ", createDate="
+				+ createDate + ", commandExecutions=" + commandExecutions + ", sentMail=" + sentMail + "]";
 	}
 
 }

@@ -46,4 +46,6 @@ public interface ICommandExecution extends IEntity {
 
 	String toJson();
 
+	boolean isOnline();
+
 }

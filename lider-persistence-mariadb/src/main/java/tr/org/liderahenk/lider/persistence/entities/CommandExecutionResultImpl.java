@@ -242,7 +242,7 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	public String toString() {
 		return "CommandExecutionResultImpl [id=" + id + ", agentId=" + agentId + ", responseCode=" + responseCode
 				+ ", responseMessage=" + responseMessage + ", contentType=" + contentType + ", createDate=" + createDate
-				+ "]";
+				+ ", mailSubject=" + mailSubject + ", mailContent=" + mailContent + "]";
 	}
 
 }
