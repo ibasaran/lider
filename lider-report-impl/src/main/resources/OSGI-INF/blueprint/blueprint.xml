@@ -6,6 +6,30 @@
                  http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
+         
+	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" 
+		init-method="init" destroy-method="destroy">
+		<property name="reportDao" ref="reportDao" />
+		<property name="entityFactory" ref="entityFactory" />
+	</bean>
+	
+	<service ref="alarmManager" interface="org.osgi.service.event.EventHandler">
+		<service-properties>
+			<entry key="event.topics">
+				<array value-type="java.lang.String">
+					<value>tr/org/liderahenk/report/view/created</value>
+					<value>tr/org/liderahenk/report/view/updated</value>
+					<value>tr/org/liderahenk/report/view/deleted</value>
+				</array>
+			</entry>
+		</service-properties>
+	</service>
+	<bean id="alarmManager" class="tr.org.liderahenk.lider.report.AlarmManager" 
+		init-method="init" destroy-method="destroy">
+		<property name="reportDao" ref="reportDao" />
+		<property name="configurationService" ref="configurationService" />
+		<property name="mailService" ref="mailService" />
+	</bean>
 
 	<service ref="biosDistroChart" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="biosDistroChart"
@@ -35,40 +59,10 @@
 	<bean id="sessionActivityTemplate"
 		class="tr.org.liderahenk.lider.report.templates.SessionActivityReportTemplateImpl" />
 
-	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" 
-		init-method="init" destroy-method="destroy">
-		<property name="reportDao" ref="reportDao" />
-		<property name="entityFactory" ref="entityFactory" />
-		<property name="templateList" ref="templateList" />
-		<property name="taskTemplate" ref="taskTemplate" />
-		<property name="onlineUsersTemplate" ref="onlineUsersTemplate" />
-		<property name="agentInfoTemplate" ref="agentInfoTemplate" />
-		<property name="installedPluginsTemplate" ref="installedPluginsTemplate" />
-		<property name="agentHardwareTemplate" ref="agentHardwareTemplate" />
-		<property name="sessionActivityTemplate" ref="sessionActivityTemplate" />
-		<property name="biosDistroChart" ref="biosDistroChart" />
-	</bean>
-	
-	<service ref="alarmManager" interface="org.osgi.service.event.EventHandler">
-		<service-properties>
-			<entry key="event.topics">
-				<array value-type="java.lang.String">
-					<value>tr/org/liderahenk/report/view/created</value>
-					<value>tr/org/liderahenk/report/view/updated</value>
-					<value>tr/org/liderahenk/report/view/deleted</value>
-				</array>
-			</entry>
-		</service-properties>
-	</service>
-	<bean id="alarmManager" class="tr.org.liderahenk.lider.report.AlarmManager" 
-		init-method="init" destroy-method="destroy">
-		<property name="reportDao" ref="reportDao" />
-		<property name="configurationService" ref="configurationService" />
-		<property name="mailService" ref="mailService" />
-	</bean>
-
 	<reference-list id="templateList" availability="optional"
-		interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
+		interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" >
+		<reference-listener bind-method="bindTemplate" ref="templateManager" />
+	</reference-list>
 	<reference id="mailService" interface="tr.org.liderahenk.lider.core.api.mail.IMailService" />
 	<reference id="reportDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao" />
