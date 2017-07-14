@@ -10,7 +10,9 @@
 	<packaging>karaf-assembly</packaging>
 
 	<properties>
-		<karaf.feature.version>4.0.7</karaf.feature.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<target.dir>target</target.dir>
+		<karaf.feature.version>4.0.9</karaf.feature.version>
 		<cellar.feature.version>4.0.1</cellar.feature.version>
 		<lider.ahenk.version>1.0.0-SNAPSHOT</lider.ahenk.version>
 	</properties>
@@ -101,7 +103,7 @@
 			<plugin>
 				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>karaf-maven-plugin</artifactId>
-				<version>4.0.0</version>
+				<version>4.0.9</version>
 				<extensions>true</extensions>
 				<configuration>
 					<!-- no startupFeatures -->
