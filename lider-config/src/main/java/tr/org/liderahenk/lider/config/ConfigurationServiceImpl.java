@@ -59,6 +59,8 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Boolean ldapUseSsl;
 	private String ldapSearchAttributes;
 	private Boolean ldapAllowSelfSignedCert;
+	private String ldapMailNotifierAttributes;
+	private String ldapEmailAttribute;
 
 	// XMPP configuration
 	private String xmppHost; // host name/server name
@@ -135,8 +137,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ liderLogOperations + ", ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
 				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
 				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", ldapAllowSelfSignedCert="
-				+ ldapAllowSelfSignedCert + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppUsername="
-				+ xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
+				+ ldapAllowSelfSignedCert + ", ldapMailNotifierAttributes=" + ldapMailNotifierAttributes
+				+ ", ldapEmailAttribute=" + ldapEmailAttribute + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort
+				+ ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
 				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
 				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
 				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppAllowSelfSignedCert="
@@ -755,12 +758,31 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.hotDeploymentPath = hotDeploymentPath;
 	}
 
+	@Override
 	public Boolean getXmppUseCustomSsl() {
 		return xmppUseCustomSsl;
 	}
 
 	public void setXmppUseCustomSsl(Boolean xmppUseCustomSsl) {
 		this.xmppUseCustomSsl = xmppUseCustomSsl;
+	}
+
+	@Override
+	public String getLdapMailNotifierAttributes() {
+		return ldapMailNotifierAttributes;
+	}
+
+	public void setLdapMailNotifierAttributes(String ldapMailNotifierAttributes) {
+		this.ldapMailNotifierAttributes = ldapMailNotifierAttributes;
+	}
+
+	@Override
+	public String getLdapEmailAttribute() {
+		return ldapEmailAttribute;
+	}
+
+	public void setLdapEmailAttribute(String ldapEmailAttribute) {
+		this.ldapEmailAttribute = ldapEmailAttribute;
 	}
 
 }

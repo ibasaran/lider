@@ -729,6 +729,16 @@ public class LDAPServiceImpl implements ILDAPService {
 			// attribute is used during task execution
 			String[] returningAttributes = new String[] { configurationService.getUserLdapPrivilegeAttribute(),
 					configurationService.getAgentLdapJidAttribute() };
+			if (configurationService.getLdapMailNotifierAttributes() != null) {
+				Set<String> attrs = new HashSet<String>();
+				attrs.add(configurationService.getUserLdapPrivilegeAttribute());
+				attrs.add(configurationService.getAgentLdapJidAttribute());
+				String[] attrArr = configurationService.getLdapMailNotifierAttributes().split(",");
+				for (String attr : attrArr) {
+					attrs.add(attr.trim());
+				}
+				returningAttributes = attrs.toArray(new String[attrs.size()]);
+			}
 
 			// Construct filtering attributes
 			String objectClasses = convertDNType2ObjectClass(dnType);

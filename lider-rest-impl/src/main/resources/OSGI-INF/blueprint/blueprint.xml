@@ -18,6 +18,8 @@
 		<property name="ldapService" ref="ldapService" />
 		<property name="entityFactory" ref="entityFactory" />
 		<property name="configService" ref="configService" />
+		<property name="mailService" ref="mailService" />
+		<property name="mailAddressDao" ref="mailAddressDao" />
 	</bean>
 
 	<service ref="profileRequestProcessor"
@@ -30,6 +32,11 @@
 		<property name="profileDao" ref="profileDao" />
 		<property name="policyDao" ref="policyDao" />
 		<property name="entityFactory" ref="entityFactory" />
+		<property name="configService" ref="configService" />
+		<property name="mailService" ref="mailService" />
+		<property name="mailAddressDao" ref="mailAddressDao" />
+		<property name="ldapService" ref="ldapService" />
+		<property name="commandDao" ref="commandDao" />
 	</bean>
 
 	<service ref="pluginRequestProcessor"
@@ -173,6 +180,6 @@
 	<reference id="mailParameterDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailParameterDao" />
 		
-		
+	<reference id="mailService"  interface="tr.org.liderahenk.lider.core.api.mail.IMailService" />
 
 </blueprint>

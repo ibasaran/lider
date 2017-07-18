@@ -147,7 +147,7 @@ public class MailNotifier {
 	private void hookListener() {
 		if (configurationService.getMailSendOnTaskCompletion()) {
 			timer = new Timer();
-			timer.schedule(new TaskCompletionListener(), 1000, configurationService.getMailCheckTaskCompletionPeriod());
+			timer.schedule(new TaskCompletionListener(), 10000, configurationService.getMailCheckTaskCompletionPeriod());
 		}
 	}
 

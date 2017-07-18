@@ -25,6 +25,8 @@
 		<property name="ldapUseSsl" value="${ldap.use.ssl}" />
 		<property name="ldapAllowSelfSignedCert" value="${ldap.allow.self.signed.cert}" />
 		<property name="ldapSearchAttributes" value="${ldap.search.attributes}" />
+		<property name="ldapMailNotifierAttributes" value="${ldap.mail.notifier.attributes}" />
+		<property name="ldapEmailAttribute" value="${ldap.email.attribute}" />
 
 		<property name="xmppHost" value="${xmpp.host}" />
 		<property name="xmppPort" value="${xmpp.port}" />

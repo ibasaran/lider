@@ -429,7 +429,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			// has
 			// arrived.
 			timer = new Timer();
-			timer.schedule(new FutureTaskListener(), 1000, configurationService.getTaskManagerFutureTaskCheckPeriod());
+			timer.schedule(new FutureTaskListener(), 10000, configurationService.getTaskManagerFutureTaskCheckPeriod());
 		}
 	}
 

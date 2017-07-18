@@ -128,6 +128,14 @@ public class CommandDaoImpl implements ICommandDao {
 	}
 
 	@Override
+	public ICommand getCommandByPolicyId(Long policyId) {
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("policy.id", policyId);
+		List<? extends ICommand> commands = findByProperties(ICommand.class, propertiesMap, null, 1);
+		return commands != null && !commands.isEmpty() ? commands.get(0) : null;
+	}
+
+	@Override
 	public List<? extends ICommand> findByProperty(Class<? extends ICommand> obj, String propertyName,
 			Object propertyValue, Integer maxResults) {
 		TypedQuery<CommandImpl> query = entityManager.createQuery("select t from " + CommandImpl.class.getSimpleName()
@@ -357,14 +365,9 @@ public class CommandDaoImpl implements ICommandDao {
 		return resultList;
 	}
 
-	private static final String FIND_TASK_COMMANDS = 
-			"SELECT DISTINCT c " 
-			+ "FROM CommandImpl c "
-			+ "LEFT JOIN c.commandExecutions ce " 
-			+ "LEFT JOIN ce.commandExecutionResults cer " 
-			+ "INNER JOIN c.task t "
-			+ "INNER JOIN t.plugin p " 
-			+ "ORDER BY t.createDate DESC";
+	private static final String FIND_TASK_COMMANDS = "SELECT DISTINCT c " + "FROM CommandImpl c "
+			+ "LEFT JOIN c.commandExecutions ce " + "LEFT JOIN ce.commandExecutionResults cer " + "INNER JOIN c.task t "
+			+ "INNER JOIN t.plugin p " + "ORDER BY t.createDate DESC";
 
 	@Override
 	public List<? extends ICommand> findTaskCommands(Integer maxResults) {
@@ -383,22 +386,18 @@ public class CommandDaoImpl implements ICommandDao {
 		return resultImpl;
 	}
 
-	
-	private static final String FIND_TASK_COMMANDS_WITH_MAIL_NOTIFICATION = 
-			"SELECT DISTINCT c "
-			+ "FROM CommandImpl c "
-			+ "INNER JOIN c.commandExecutions ce "
-			+ "INNER JOIN ce.commandExecutionResults cer "
+	private static final String FIND_TASK_COMMANDS_WITH_MAIL_NOTIFICATION = "SELECT DISTINCT c " + "FROM CommandImpl c "
+			+ "INNER JOIN c.commandExecutions ce " + "INNER JOIN ce.commandExecutionResults cer "
 			+ "WHERE c.sentMail = False AND ce.online = True AND cer.responseCode IN ( :taskEndingStates ) "
 			+ "ORDER BY c.createDate DESC";
-	
+
 	@Override
 	public List<? extends ICommand> findTaskCommandsWithMailNotification() {
 		Query query = entityManager.createQuery(FIND_TASK_COMMANDS_WITH_MAIL_NOTIFICATION);
 		query.setParameter("taskEndingStates", StatusCode.getTaskEndingStateIds());
 		return (List<CommandImpl>) query.getResultList();
 	}
-	
+
 	/**
 	 * 
 	 * @param tokens

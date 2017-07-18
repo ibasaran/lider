@@ -19,16 +19,31 @@
 */
 package tr.org.liderahenk.lider.rest;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
+import tr.org.liderahenk.lider.core.api.mail.IMailService;
+import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IMailAddress;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
@@ -39,6 +54,8 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.lider.core.api.utils.LiderCoreUtils;
+import tr.org.liderahenk.lider.core.api.utils.StringJoinCursor;
 
 /**
  * Processor class for handling/processing profile data.
@@ -58,6 +75,13 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	private IResponseFactory responseFactory;
 	private IPolicyDao policyDao;
 	private IEntityFactory entityFactory;
+	private IConfigurationService configService;
+	private IMailService mailService;
+	private IMailAddressDao mailAddressDao;
+	private ILDAPService ldapService;
+	private ICommandDao commandDao;
+
+	private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy H:m");
 
 	@Override
 	public IRestResponse add(String json) {
@@ -96,6 +120,11 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 				for (IPolicy policy : policies) {
 					logger.debug("Updating policy: " + policy.getId());
 					incrementPolicyVersion(policy);
+					// Is policy applied to some LDAP entry
+					ICommand command = commandDao.getCommandByPolicyId(policy.getId());
+					if (command != null) {
+						sendMail(policy, profile, command);
+					}
 				}
 			}
 
@@ -107,6 +136,99 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
+	}
+
+	private void sendMail(IPolicy policy, IProfile updatedProfile, ICommand command) {
+		String mailSubject = "Lider Ahenk Politikası";
+		StringBuilder mailContent = new StringBuilder();
+		final List<String> toList = new ArrayList<String>();
+
+		mailContent
+				.append("Aşağıda isimleri verilen eklentilerden oluşan ve detaylarıyla aşağıda belirtilen LDAP ögelerine ")
+				.append(format.format(policy.getCreateDate())).append(" tarihinde uygulanmış \"")
+				.append(policy.getLabel()).append("\" isimli politikadaki \"").append(updatedProfile.getLabel())
+				.append("\" isimli profil kaydında değişiklik yapılmıştır:\n\n");
+		mailContent.append("Politikayı oluşturan eklentiler:\n");
+
+		List<LdapEntry> targetEntries = ldapService.findTargetEntries(command.getDnList(), command.getDnType());
+
+		Set<? extends IProfile> profiles = policy.getProfiles();
+		List<String> plugins = new ArrayList<String>();
+		StringBuilder profileContent = new StringBuilder();
+		for (IProfile profile : profiles) {
+			Map<String, Object> profileData = profile.getProfileData();
+			// Plugin description
+			plugins.add(profile.getPlugin().getDescription());
+			if (profileData != null) {
+				Boolean mailSend = (Boolean) profileData.get("mailSend");
+				if (mailSend != null && mailSend.booleanValue()) {
+					// Add profile content
+					profileContent
+							.append(replaceValues(profileData.get("mailContent").toString(), profileData, command));
+
+					// Add admin recipients
+					List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(IMailAddress.class,
+							"plugin.id", profile.getPlugin().getId(), 0);
+					if (mailAddressList != null) {
+						for (IMailAddress iMailAddress : mailAddressList) {
+							toList.add(iMailAddress.getMailAddress());
+						}
+					}
+				}
+			}
+		}
+		mailContent.append(StringUtils.join(plugins, ","));
+		// LDAP entries and their details (TCK, username etc)
+		mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
+		mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
+			@Override
+			public String getValue(Object object) {
+				if (object instanceof LdapEntry) {
+					LdapEntry entry = (LdapEntry) object;
+					Map<String, String> attributes = entry.getAttributes();
+					StringBuilder attrStr = new StringBuilder();
+					if (attributes != null) {
+						for (Entry<String, String> attr : attributes.entrySet()) {
+							// Ignore liderPrivilege attribute...
+							if (attr.getKey().equalsIgnoreCase(configService.getUserLdapPrivilegeAttribute())) {
+								continue;
+							}
+							attrStr.append(attr.getKey()).append("=").append(attr.getValue());
+						}
+						String email = attributes.get(configService.getLdapEmailAttribute());
+						// Add personnel email to recipients
+						if (email != null && !email.isEmpty()) {
+							toList.add(email);
+						}
+					}
+					return "DN: " + entry.getDistinguishedName() + " Öznitelikler: [" + attrStr.toString() + "]";
+				}
+				return LiderCoreUtils.EMPTY;
+			}
+		}));
+		mailContent.append("\n\nPolitika parametreleri:\n");
+		mailContent.append(profileContent).append("\n\n");
+		if (toList.size() > 0) {
+			mailService.sendMail(toList, mailSubject, mailContent.toString());
+		}
+	}
+
+	private Pattern EXPRESSION = Pattern.compile("\\{(.*?)\\}");
+
+	private String replaceValues(String message, Map<String, Object> values, ICommand command) {
+		Matcher m = EXPRESSION.matcher(message);
+		while (m.find()) {
+			String expr = m.group(1);
+			Object value = null;
+			if (values.containsKey(expr)) {
+				message = message.replaceAll("\\{" + expr + "\\}", values.get(expr).toString());
+			} else if ((value = LiderCoreUtils.getFieldValueIfExists(command, expr)) != null) {
+				message = message.replaceAll("\\{" + expr + "\\}", value.toString());
+			} else {
+				message = message.replaceAll("\\{" + expr + "\\}", "");
+			}
+		}
+		return message;
 	}
 
 	@Override
@@ -230,6 +352,26 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
+	}
+
+	public void setMailService(IMailService mailService) {
+		this.mailService = mailService;
+	}
+
+	public void setMailAddressDao(IMailAddressDao mailAddressDao) {
+		this.mailAddressDao = mailAddressDao;
+	}
+
+	public void setConfigService(IConfigurationService configService) {
+		this.configService = configService;
+	}
+
+	public void setLdapService(ILDAPService ldapService) {
+		this.ldapService = ldapService;
+	}
+
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
 	}
 
 }

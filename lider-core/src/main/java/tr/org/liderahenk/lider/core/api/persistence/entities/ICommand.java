@@ -69,7 +69,7 @@ public interface ICommand extends IEntity {
 	 * @return policy activation date
 	 */
 	Date getActivationDate();
-	
+
 	/**
 	 * 
 	 * @return policy expiration date

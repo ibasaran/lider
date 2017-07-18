@@ -395,4 +395,8 @@ public interface IConfigurationService {
 
 	Long getMailCheckTaskCompletionPeriod();
 
+	String getLdapMailNotifierAttributes();
+
+	String getLdapEmailAttribute();
+
 }
