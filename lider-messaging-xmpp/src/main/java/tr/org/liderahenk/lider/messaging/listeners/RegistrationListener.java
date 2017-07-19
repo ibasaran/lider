@@ -117,7 +117,7 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 						client.sendMessage(postRegistrationMessage);
 					}
 				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
+					logger.warn(e.getMessage(), e);
 					logger.warn("Falling back to default subscriber.");
 					// Fall back to default subscriber if there is no other!
 					responseMessage = defaultSubcriber.messageReceived(message);
