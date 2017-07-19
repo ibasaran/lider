@@ -165,4 +165,6 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 
 	ICommand getCommandByPolicyId(Long id);
 
+	List<? extends ICommand> findPolicyCommandsWithMailNotification();
+
 }

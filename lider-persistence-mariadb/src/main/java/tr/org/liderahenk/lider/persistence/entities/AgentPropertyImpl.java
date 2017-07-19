@@ -27,7 +27,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,7 +46,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
  */
 @JsonIgnoreProperties({ "agent" })
 @Entity
-@Table(name = "C_AGENT_PROPERTY", uniqueConstraints = @UniqueConstraint(columnNames = { "AGENT_ID", "PROPERTY_NAME" }) )
+@Table(name = "C_AGENT_PROPERTY", uniqueConstraints = @UniqueConstraint(columnNames = { "AGENT_ID", "PROPERTY_NAME" }))
 public class AgentPropertyImpl implements IAgentProperty {
 
 	private static final long serialVersionUID = 8570595577450847524L;
@@ -64,7 +63,7 @@ public class AgentPropertyImpl implements IAgentProperty {
 	@Column(name = "PROPERTY_NAME", nullable = false)
 	private String propertyName;
 
-	@Column(name = "PROPERTY_VALUE", columnDefinition = "TEXT", nullable=false)
+	@Column(name = "PROPERTY_VALUE", columnDefinition = "TEXT", nullable = false, length = 65535)
 	private String propertyValue;
 
 	@Temporal(TemporalType.TIMESTAMP)

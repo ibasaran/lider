@@ -47,6 +47,7 @@
 		<property name="commandDao" ref="commandDao" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="entityFactory" ref="entityFactory" />
+		<property name="ldapService" ref="ldapService" />
 	</bean>
 	
 	<!-- Task status notifier for Lider Console -->

@@ -89,10 +89,10 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
 
-	@Column(name = "MAIL_SUBJECT")
+	@Column(name = "MAIL_SUBJECT", length = 1000)
 	private String mailSubject;
 
-	@Column(name = "MAIL_CONTENT")
+	@Column(name = "MAIL_CONTENT", columnDefinition = "TEXT", length = 65535)
 	private String mailContent;
 
 	public CommandExecutionResultImpl() {

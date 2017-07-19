@@ -224,7 +224,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				logger.info("DN type: {}, UID: {}", entry.getType().toString(), uid);
 
 				// New command execution
-				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid, messagingService.isRecipientOnline(getFullJid(uid)));
+				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid,
+						messagingService.isRecipientOnline(getFullJid(uid)));
 				command.addCommandExecution(execution);
 
 				// Task message
@@ -277,10 +278,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			try {
 				Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
-				mailSubject = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_subject")
-						: null);
-				mailContent = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_content")
-						: null);
+				mailSubject = (String) (mailSend != null && mailSend.booleanValue()
+						? message.getResponseData().get("mail_subject") : null);
+				mailContent = (String) (mailSend != null && mailSend.booleanValue()
+						? message.getResponseData().get("mail_content") : null);
 			} catch (Exception e1) {
 				logger.error(e1.getMessage(), e1);
 			}

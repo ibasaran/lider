@@ -81,9 +81,9 @@ public class PolicyManagerImpl implements IPolicyStatusSubscriber {
 
 			try {
 				Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
-				mailSubject = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_subject")
+				mailSubject = (String) (mailSend != null && mailSend.booleanValue() ? message.getResponseData().get("mail_subject")
 						: null);
-				mailContent = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_content")
+				mailContent = (String) (mailSend != null && mailSend.booleanValue() ? message.getResponseData().get("mail_content")
 						: null);
 			} catch (Exception e1) {
 				logger.error(e1.getMessage(), e1);

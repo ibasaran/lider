@@ -128,7 +128,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		}
 	}
 
-	private void sendMail(IPolicy policy, List<LdapEntry> targetEntries, ICommand command) {
+	private boolean sendMail(IPolicy policy, List<LdapEntry> targetEntries, ICommand command) {
 		String mailSubject = "Lider Ahenk Politikası";
 		StringBuilder mailContent = new StringBuilder();
 		final List<String> toList = new ArrayList<String>();
@@ -166,43 +166,46 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				}
 			}
 		}
-		if (!mailSend)
-			return;
-		mailContent.append(StringUtils.join(plugins, ","));
-		// LDAP entries and their details (TCK, username etc)
-		mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
-		mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
-			@Override
-			public String getValue(Object object) {
-				if (object instanceof LdapEntry) {
-					LdapEntry entry = (LdapEntry) object;
-					Map<String, String> attributes = entry.getAttributes();
-					List<String> attrStr = new ArrayList<String>();
-					if (attributes != null) {
-						for (Entry<String, String> attr : attributes.entrySet()) {
-							// Ignore liderPrivilege attribute...
-							if (attr.getKey().equalsIgnoreCase(configService.getUserLdapPrivilegeAttribute())) {
-								continue;
+
+		if (mailSend) {
+			mailContent.append(StringUtils.join(plugins, ","));
+			// LDAP entries and their details (TCK, username etc)
+			mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
+			mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
+				@Override
+				public String getValue(Object object) {
+					if (object instanceof LdapEntry) {
+						LdapEntry entry = (LdapEntry) object;
+						Map<String, String> attributes = entry.getAttributes();
+						List<String> attrStr = new ArrayList<String>();
+						if (attributes != null) {
+							for (Entry<String, String> attr : attributes.entrySet()) {
+								// Ignore liderPrivilege attribute...
+								if (attr.getKey().equalsIgnoreCase(configService.getUserLdapPrivilegeAttribute())) {
+									continue;
+								}
+								attrStr.add(attr.getKey() + "=" + attr.getValue());
 							}
-							attrStr.add(attr.getKey() + "=" + attr.getValue());
+							String email = attributes.get(configService.getLdapEmailAttribute());
+							// Add personnel email to recipients
+							if (email != null && !email.isEmpty()) {
+								toList.add(email);
+							}
 						}
-						String email = attributes.get(configService.getLdapEmailAttribute());
-						// Add personnel email to recipients
-						if (email != null && !email.isEmpty()) {
-							toList.add(email);
-						}
+						return "DN: " + entry.getDistinguishedName() + " Öznitelikler: ["
+								+ StringUtils.join(attrStr, ",") + "]";
 					}
-					return "DN: " + entry.getDistinguishedName() + " Öznitelikler: [" + StringUtils.join(attrStr, ",")
-							+ "]";
+					return LiderCoreUtils.EMPTY;
 				}
-				return LiderCoreUtils.EMPTY;
+			}));
+			mailContent.append("\n\nPolitika parametreleri:\n");
+			mailContent.append(profileContent).append("\n\n");
+			if (toList.size() > 0) {
+				mailService.sendMail(toList, mailSubject, mailContent.toString());
 			}
-		}));
-		mailContent.append("\n\nPolitika parametreleri:\n");
-		mailContent.append(profileContent).append("\n\n");
-		if (toList.size() > 0) {
-			mailService.sendMail(toList, mailSubject, mailContent.toString());
 		}
+
+		return mailSend;
 	}
 
 	private Pattern EXPRESSION = Pattern.compile("\\{(.*?)\\}");

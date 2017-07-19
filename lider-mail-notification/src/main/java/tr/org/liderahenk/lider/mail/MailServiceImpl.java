@@ -48,7 +48,7 @@ public class MailServiceImpl implements IMailService {
 	private Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
 
 	private IConfigurationService configurationService;
-	
+
 	@Override
 	public void sendMail(List<String> toList, String subject, String body) {
 		sendMail(toList, subject, body, "text/plain; charset=ISO-8859-9");
@@ -60,7 +60,7 @@ public class MailServiceImpl implements IMailService {
 			throw new IllegalArgumentException("toList was null!");
 		}
 
-		logger.info("Sending mail to: {}, with subject: {} and body: {}", new Object[] { toList, subject, body });
+		logger.debug("Sending mail to: {}, with subject: {} and body: {}", new Object[] { toList, subject, body });
 
 		Properties properties;
 		Session session;
