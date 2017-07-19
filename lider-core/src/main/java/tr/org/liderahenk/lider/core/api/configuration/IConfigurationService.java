@@ -399,4 +399,8 @@ public interface IConfigurationService {
 
 	String getLdapEmailAttribute();
 
+	Boolean getMailSendOnPolicyCompletion();
+
+	Long getMailCheckPolicyCompletionPeriod();
+
 }

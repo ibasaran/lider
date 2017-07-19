@@ -113,6 +113,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Boolean mailSendOnTaskCompletion;
 	private Long mailCheckTaskCompletionPeriod;
 
+	private Boolean mailSendOnPolicyCompletion;
+	private Long mailCheckPolicyCompletionPeriod;
+
 	// Hot deployment configuration
 	private String hotDeploymentPath;
 
@@ -158,12 +161,13 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", mailSmtpConnTimeout=" + mailSmtpConnTimeout + ", mailSmtpTimeout=" + mailSmtpTimeout
 				+ ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout + ", mailSendOnTaskCompletion="
 				+ mailSendOnTaskCompletion + ", mailCheckTaskCompletionPeriod=" + mailCheckTaskCompletionPeriod
-				+ ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol=" + fileServerProtocol
-				+ ", fileServerHost=" + fileServerHost + ", fileServerUsername=" + fileServerUsername
-				+ ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath=" + fileServerPluginPath
-				+ ", fileServerAgreementPath=" + fileServerAgreementPath + ", fileServerAgentFilePath="
-				+ fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl + ", fileServerPort=" + fileServerPort
-				+ "]";
+				+ ", mailSendOnPolicyCompletion=" + mailSendOnPolicyCompletion + ", mailCheckPolicyCompletionPeriod="
+				+ mailCheckPolicyCompletionPeriod + ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol="
+				+ fileServerProtocol + ", fileServerHost=" + fileServerHost + ", fileServerUsername="
+				+ fileServerUsername + ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath="
+				+ fileServerPluginPath + ", fileServerAgreementPath=" + fileServerAgreementPath
+				+ ", fileServerAgentFilePath=" + fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl
+				+ ", fileServerPort=" + fileServerPort + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -783,6 +787,24 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setLdapEmailAttribute(String ldapEmailAttribute) {
 		this.ldapEmailAttribute = ldapEmailAttribute;
+	}
+
+	@Override
+	public Boolean getMailSendOnPolicyCompletion() {
+		return mailSendOnPolicyCompletion;
+	}
+
+	public void setMailSendOnPolicyCompletion(Boolean mailSendOnPolicyCompletion) {
+		this.mailSendOnPolicyCompletion = mailSendOnPolicyCompletion;
+	}
+
+	@Override
+	public Long getMailCheckPolicyCompletionPeriod() {
+		return mailCheckPolicyCompletionPeriod;
+	}
+
+	public void setMailCheckPolicyCompletionPeriod(Long mailCheckPolicyCompletionPeriod) {
+		this.mailCheckPolicyCompletionPeriod = mailCheckPolicyCompletionPeriod;
 	}
 
 }

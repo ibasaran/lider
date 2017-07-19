@@ -73,6 +73,9 @@
 		<property name="mailSendOnTaskCompletion" value="${mail.send.on.task.completion}" />
 		<property name="mailCheckTaskCompletionPeriod" value="${mail.check.task.completion.period}" />
 		
+		<property name="mailSendOnPolicyCompletion" value="${mail.send.on.policy.completion}" />
+		<property name="mailCheckPolicyCompletionPeriod" value="${mail.check.policy.completion.period}" />
+		
 		<property name="hotDeploymentPath" value="${hot.deployment.path}" />
 		
 		<property name="fileServerProtocol" value="${file.server.protocol}" />
