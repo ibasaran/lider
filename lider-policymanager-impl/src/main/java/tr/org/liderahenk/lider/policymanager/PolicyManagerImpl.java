@@ -75,6 +75,19 @@ public class PolicyManagerImpl implements IPolicyStatusSubscriber {
 	public void messageReceived(IPolicyStatusMessage message) throws Exception {
 		if (message != null) {
 			logger.info("Policy manager received message from {}", message.getFrom());
+			
+			String mailSubject = null;
+			String mailContent = null;
+
+			try {
+				Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
+				mailSubject = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_subject")
+						: null);
+				mailContent = (String) (mailSend != null && mailSend ? message.getResponseData().get("mail_content")
+						: null);
+			} catch (Exception e1) {
+				logger.error(e1.getMessage(), e1);
+			}
 
 			// Find related agent
 			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", message.getFrom().split("@")[0], 1);
@@ -87,7 +100,7 @@ public class PolicyManagerImpl implements IPolicyStatusSubscriber {
 
 					// Create new command execution result
 					ICommandExecutionResult result = entityFactory.createCommandExecutionResult(message,
-							commandExecution, agent.getId());
+							commandExecution, agent.getId(), mailSubject, mailContent);
 					commandExecution.addCommandExecutionResult(result);
 
 					try {

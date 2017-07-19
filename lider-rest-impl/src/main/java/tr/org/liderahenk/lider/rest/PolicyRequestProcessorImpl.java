@@ -133,6 +133,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		StringBuilder mailContent = new StringBuilder();
 		final List<String> toList = new ArrayList<String>();
 
+		boolean mailSend = false;
 		mailContent.append("Aşağıda isimleri verilen eklentilerden oluşan \"").append(policy.getLabel())
 				.append("\" isimli politika ").append(format.format(new Date()))
 				.append(" tarihinde aşağıda detaylarıyla belirtilen LDAP ögelerine uygulanmıştır:\n\n");
@@ -146,8 +147,10 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			// Plugin description
 			plugins.add(profile.getPlugin().getDescription());
 			if (profileData != null) {
-				Boolean mailSend = (Boolean) profileData.get("mailSend");
-				if (mailSend != null && mailSend.booleanValue()) {
+				Boolean mailSendParam = (Boolean) profileData.get("mailSend");
+				if (mailSendParam != null && mailSendParam.booleanValue()) {
+					// At least one profile wants to send mail!
+					mailSend = true;
 					// Add profile content
 					profileContent
 							.append(replaceValues(profileData.get("mailContent").toString(), profileData, command));
@@ -163,6 +166,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				}
 			}
 		}
+		if (!mailSend)
+			return;
 		mailContent.append(StringUtils.join(plugins, ","));
 		// LDAP entries and their details (TCK, username etc)
 		mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");

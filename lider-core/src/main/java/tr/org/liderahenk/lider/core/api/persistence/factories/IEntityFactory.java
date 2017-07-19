@@ -74,11 +74,13 @@ public interface IEntityFactory {
 	 * @param message
 	 * @param commandExecution
 	 * @param agentId
+	 * @param mailContent 
+	 * @param mailSubject 
 	 * @return
 	 * @throws Exception
 	 */
 	ICommandExecutionResult createCommandExecutionResult(IPolicyStatusMessage message,
-			ICommandExecution commandExecution, Long agentId) throws Exception;
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) throws Exception;
 
 	/**
 	 * 

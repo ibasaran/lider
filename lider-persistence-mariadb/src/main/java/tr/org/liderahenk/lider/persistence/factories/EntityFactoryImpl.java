@@ -104,10 +104,11 @@ public class EntityFactoryImpl implements IEntityFactory {
 
 	@Override
 	public ICommandExecutionResult createCommandExecutionResult(IPolicyStatusMessage message,
-			ICommandExecution commandExecution, Long agentId) throws Exception {
+			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) throws Exception {
 		byte[] data = new ObjectMapper().writeValueAsBytes(message.getResponseData());
 		return new CommandExecutionResultImpl(null, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(), null, null);
+				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(),
+				mailSubject, mailContent);
 	}
 
 	@Override
@@ -115,14 +116,16 @@ public class EntityFactoryImpl implements IEntityFactory {
 			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) throws Exception {
 		byte[] data = new ObjectMapper().writeValueAsBytes(message.getResponseData());
 		return new CommandExecutionResultImpl(null, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(), mailSubject, mailContent);
+				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(),
+				mailSubject, mailContent);
 	}
 
 	@Override
 	public ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, byte[] data,
 			ICommandExecution commandExecution, Long agentId, String mailSubject, String mailContent) {
 		return new CommandExecutionResultImpl(null, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(), mailSubject, mailContent);
+				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date(),
+				mailSubject, mailContent);
 	}
 
 	/**
@@ -163,14 +166,16 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid, List<String> uidList)
 			throws Exception {
+		Boolean mailSend = (Boolean) (((ITaskRequest) request).getParameterMap() != null ? ((ITaskRequest) request).getParameterMap().get("mailSend") : null);
 		return new CommandImpl(null, null, (TaskImpl) task, request.getDnList(), request.getDnType(), uidList,
-				commandOwnerJid, ((ITaskRequest) request).getActivationDate(), null, new Date(), null, false);
+				commandOwnerJid, ((ITaskRequest) request).getActivationDate(), null, new Date(), null, mailSend != null && mailSend ? false : true);
 	}
 
 	@Override
 	public ICommand createCommand(IPolicy policy, ICommandRequest request, String commandOwnerJid) throws Exception {
 		return new CommandImpl(null, (PolicyImpl) policy, null, request.getDnList(), request.getDnType(), null,
-				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(), ((IPolicyExecutionRequest) request).getExpirationDate(), new Date(), null, false);
+				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(),
+				((IPolicyExecutionRequest) request).getExpirationDate(), new Date(), null, false);
 	}
 
 	@Override
@@ -293,7 +298,7 @@ public class EntityFactoryImpl implements IEntityFactory {
 	public IAgent createAgent(IAgent agent) {
 		return new AgentImpl(agent);
 	}
-	
+
 	@Override
 	public ICommand createCommand(ICommand command, boolean sentMail) throws Exception {
 		CommandImpl c = new CommandImpl(command);
@@ -401,17 +406,14 @@ public class EntityFactoryImpl implements IEntityFactory {
 
 	@Override
 	public IMailContent createMailContent(IPlugin plugin, IMailContent content) {
-		
-		
+
 		return new MailContentImpl(null, content.getMailContent(), (PluginImpl) plugin, new Date(), null);
 	}
 
 	@Override
 	public IMailAddress createMailAddress(IPlugin plugin, IMailAddress mailAddress) {
-		return new MailAddressImpl(mailAddress.getId(), mailAddress.getMailAddress(),(PluginImpl) plugin, new Date(), mailAddress.getModifyDate(),mailAddress.isDeleted());
+		return new MailAddressImpl(mailAddress.getId(), mailAddress.getMailAddress(), (PluginImpl) plugin, new Date(),
+				mailAddress.getModifyDate(), mailAddress.isDeleted());
 	}
-	
-	
-	
-	
+
 }
