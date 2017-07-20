@@ -168,7 +168,9 @@ public class MailNotifier {
 	protected class PolicyResultListener implements Runnable {
 		@Override
 		public void run() {
-			// No mail were sent for these commands:
+			//
+			// Send mail if the applied policy is finished OR its expiration date has arrived...
+			//
 			logger.debug("Querying policy commands with mail notification.");
 			List<? extends ICommand> commands = commandDao.findPolicyCommandsWithMailNotification();
 			if (commands != null && commands.size() > 0) {
