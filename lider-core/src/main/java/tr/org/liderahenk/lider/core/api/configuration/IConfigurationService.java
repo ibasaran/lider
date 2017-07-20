@@ -39,22 +39,10 @@ public interface IConfigurationService {
 	//
 
 	/**
-	 * Debug mode affects Lider in various way, if it is enabled, plugin manager
-	 * no longer deletes plugins not installed, also Karaf container sets log
-	 * level to DEBUG.
 	 * 
-	 * @return true if debug mode is enabled, false otherwise.
+	 * @return locale (tr, en)
 	 */
-	Boolean getLiderDebugEnabled();
-
-	/**
-	 * Lider create log records for all (LOGIN operation and CRUD operations)
-	 * operations in C_OPERATION_LOG table.
-	 * 
-	 * @return true if we want to log all operations in the system, false
-	 *         otherwise.
-	 */
-	Boolean getLiderLogOperations();
+	String getLiderLocale();
 
 	//
 	// LDAP configuration

@@ -47,8 +47,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private static Logger logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
 	// Lider configuration
-	private Boolean liderDebugEnabled;
-	private Boolean liderLogOperations;
+	private String liderLocale;
 
 	// LDAP configuration
 	private String ldapServer;
@@ -136,19 +135,18 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	@Override
 	public String toString() {
-		return "ConfigurationServiceImpl [liderDebugEnabled=" + liderDebugEnabled + ", liderLogOperations="
-				+ liderLogOperations + ", ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
-				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
-				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", ldapAllowSelfSignedCert="
-				+ ldapAllowSelfSignedCert + ", ldapMailNotifierAttributes=" + ldapMailNotifierAttributes
-				+ ", ldapEmailAttribute=" + ldapEmailAttribute + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort
-				+ ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
-				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
-				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
-				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppAllowSelfSignedCert="
-				+ xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl + ", xmppPresencePriority="
-				+ xmppPresencePriority + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
-				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+		return "ConfigurationServiceImpl [liderLocale=" + liderLocale + ", ldapServer=" + ldapServer + ", ldapPort="
+				+ ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn="
+				+ ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes
+				+ ", ldapAllowSelfSignedCert=" + ldapAllowSelfSignedCert + ", ldapMailNotifierAttributes="
+				+ ldapMailNotifierAttributes + ", ldapEmailAttribute=" + ldapEmailAttribute + ", xmppHost=" + xmppHost
+				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
+				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
+				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
+				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
+				+ ", xmppAllowSelfSignedCert=" + xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl
+				+ ", xmppPresencePriority=" + xmppPresencePriority + ", agentLdapBaseDn=" + agentLdapBaseDn
+				+ ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
 				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
 				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
 				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
@@ -179,21 +177,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	}
 
 	@Override
-	public Boolean getLiderDebugEnabled() {
-		return liderDebugEnabled;
+	public String getLiderLocale() {
+		return liderLocale;
 	}
 
-	public void setLiderDebugEnabled(Boolean liderDebugEnabled) {
-		this.liderDebugEnabled = liderDebugEnabled;
-	}
-
-	@Override
-	public Boolean getLiderLogOperations() {
-		return liderLogOperations;
-	}
-
-	public void setLiderLogOperations(Boolean liderLogOperations) {
-		this.liderLogOperations = liderLogOperations;
+	public void setLiderLocale(String liderLocale) {
+		this.liderLocale = liderLocale;
 	}
 
 	@Override

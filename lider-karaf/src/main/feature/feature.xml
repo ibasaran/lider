@@ -29,48 +29,28 @@
 		<details>LiderAhenk client management system test feature for
 			deploying without dependencies (for auto dependency resolve)
 		</details>
-		<bundle start-level="80">mvn:${groupId}/lider-core/${project.version}
-		</bundle>
-		<bundle start-level="81">mvn:${groupId}/lider-config/${project.version}
-		</bundle>
-		<configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:${groupId}/lider-config/${project.version}/cfg
-		</configfile>
-		<bundle start-level="82">mvn:${groupId}/lider-datasource-mariadb/${project.version}
-		</bundle>
-		<configfile finalname="/etc/tr.org.liderahenk.datasource.cfg">mvn:${groupId}/lider-datasource-mariadb/${project.version}/cfg
-		</configfile>
-		<bundle start-level="83">mvn:${groupId}/lider-persistence-mariadb/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-web/${project.version}/war
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-cache-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-ldap-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-log-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-authorization-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-messaging-xmpp/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-rest-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-router-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-service-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-taskmanager-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-pluginmanager-impl/${project.version}
-		</bundle>
-		<bundle start-level="84">mvn:${groupId}/lider-policymanager-impl/${project.version}
-		</bundle>
-		<bundle start-level="85">mvn:${groupId}/lider-mail-notification/${project.version}
-		</bundle>
-		<bundle start-level="86">mvn:${groupId}/lider-report-impl/${project.version}
-		</bundle>
-		<bundle start-level="86">mvn:${groupId}/lider-deployer/${project.version}
-		</bundle>
+		<bundle start-level="80">mvn:${groupId}/lider-core/${project.version}</bundle>
+		<bundle start-level="80">mvn:${groupId}/lider-localization/${project.version}</bundle>
+		<bundle start-level="81">mvn:${groupId}/lider-config/${project.version}</bundle>
+		<configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:${groupId}/lider-config/${project.version}/cfg</configfile>
+		<bundle start-level="82">mvn:${groupId}/lider-datasource-mariadb/${project.version}</bundle>
+		<configfile finalname="/etc/tr.org.liderahenk.datasource.cfg">mvn:${groupId}/lider-datasource-mariadb/${project.version}/cfg</configfile>
+		<bundle start-level="83">mvn:${groupId}/lider-persistence-mariadb/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-web/${project.version}/war</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-cache-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-ldap-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-log-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-authorization-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-messaging-xmpp/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-rest-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-router-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-service-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-taskmanager-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-pluginmanager-impl/${project.version}</bundle>
+		<bundle start-level="84">mvn:${groupId}/lider-policymanager-impl/${project.version}</bundle>
+		<bundle start-level="85">mvn:${groupId}/lider-mail-notification/${project.version}</bundle>
+		<bundle start-level="86">mvn:${groupId}/lider-report-impl/${project.version}</bundle>
+		<bundle start-level="86">mvn:${groupId}/lider-deployer/${project.version}</bundle>
 	</feature>
 
 	<feature name="lider-plugin-bundles" description="${project.name}"
