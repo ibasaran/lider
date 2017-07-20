@@ -23,9 +23,9 @@
 		<karaf.maven.plugin>4.0.3</karaf.maven.plugin>
 		<findbugs.maven.plugin.version>3.0.0</findbugs.maven.plugin.version>
 		<checkstyle.maven.plugin.version>2.12</checkstyle.maven.plugin.version>
-		<java.version>1.6</java.version>
+		<java.version>1.7</java.version>
 		<junit.version>4.12</junit.version>
-		<mockito.version>1.10.19</mockito.version>
+		<mockito.version>2.2.29</mockito.version>
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.jpa.api.version>1.0.0.Final</hibernate.jpa.api.version>
@@ -154,6 +154,7 @@
 
 	<modules>
 		<module>lider-core</module>
+		<module>lider-localization</module>
 		<module>lider-persistence-mariadb</module>
 		<module>lider-messaging-xmpp</module>
 		<module>lider-web</module>
@@ -574,6 +575,7 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- Logging -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -589,10 +591,21 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		<!-- OSGI related stuff -->
 		<dependency>
 			<groupId>org.apache.aries.blueprint</groupId>
 			<artifactId>org.apache.aries.blueprint</artifactId>
 			<version>${aries.blueprint.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>${osgi.compendium.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.core.version}</version>
 		</dependency>
 	</dependencies>
 
