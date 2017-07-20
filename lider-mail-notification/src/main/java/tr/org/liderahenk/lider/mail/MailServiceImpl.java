@@ -83,7 +83,7 @@ public class MailServiceImpl implements IMailService {
 			// Setup mail sender & recipients
 			session = Session.getDefaultInstance(properties, null);
 			message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(configurationService.getMailAddress(), "Lider Ahenk Platform"));
+			message.setFrom(new InternetAddress(configurationService.getMailAddress(), "Lider Ahenk Merkezi Yönetim Sistemi"));
 			for (String recipient : toList) {
 				message.addRecipient(Message.RecipientType.TO,
 						new InternetAddress(recipient.toLowerCase(Locale.ENGLISH).trim()));

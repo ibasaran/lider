@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.i18n.ILocaleService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.mail.IMailService;
@@ -66,6 +67,7 @@ public class MailNotifier {
 	private IConfigurationService configurationService;
 	private IEntityFactory entityFactory;
 	private ILDAPService ldapService;
+	private ILocaleService localeService;
 
 	private ScheduledThreadPoolExecutor threadExecutor;
 
@@ -134,8 +136,8 @@ public class MailNotifier {
 											&& !result.getMailContent().trim().isEmpty()) {
 										hasContent = true;
 										mailContent.append("\nAhenk: ").append(execution.getUid()).append(", Sonuç: ")
-												.append(result.getResponseCode().toString()).append(", Mesaj:")
-												.append(result.getMailContent());
+												.append(localeService.getString(result.getResponseCode().toString()))
+												.append(", Mesaj:").append(result.getMailContent());
 										break;
 									}
 								}
@@ -248,8 +250,8 @@ public class MailNotifier {
 									return LiderCoreUtils.EMPTY;
 								}
 							}));
-							mailContent.append(
-									"\n\nPolitika sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
+							mailContent
+									.append("\n\nPolitika sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
 
 							if (toList.size() > 0) {
 								logger.debug("Appending policy results to mail content.");
@@ -261,7 +263,9 @@ public class MailNotifier {
 											try {
 												hasContent = true;
 												mailContent.append("\n\nUID: ").append(execution.getUid())
-														.append(", Sonuç: ").append(result.getResponseCode().toString())
+														.append(", Sonuç: ")
+														.append(localeService
+																.getString(result.getResponseCode().toString()))
 														.append(", Mesaj:\n")
 														.append(replaceValues(result.getMailContent(), command));
 												break;
@@ -309,6 +313,8 @@ public class MailNotifier {
 	}
 
 	private void hookListener() {
+		// Tip: DO NOT use Timer when scheduling multiple threads! Use
+		// ScheduledThreadPoolExecutor instead!
 		// Thread executor for task mail notification
 		if (configurationService.getMailSendOnTaskCompletion()) {
 			logger.debug("Scheduled thread for task mail notification");
@@ -351,6 +357,10 @@ public class MailNotifier {
 
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
+	}
+
+	public void setLocaleService(ILocaleService localeService) {
+		this.localeService = localeService;
 	}
 
 }

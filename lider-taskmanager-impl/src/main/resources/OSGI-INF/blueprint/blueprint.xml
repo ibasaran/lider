@@ -48,6 +48,7 @@
 		<property name="configurationService" ref="configurationService" />
 		<property name="entityFactory" ref="entityFactory" />
 		<property name="ldapService" ref="ldapService" />
+		<property name="localeService" ref="localeService" />
 	</bean>
 	
 	<!-- Task status notifier for Lider Console -->
@@ -62,33 +63,23 @@
 		<property name="messagingService" ref="messagingService" />
 	</bean>
 
-	<reference id="pluginDao"
-		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
-	<reference id="taskDao"
-		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao" />
-	<reference id="commandDao"
-		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
-	<reference id="agentDao"
-		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
-	<reference id="ldapService"
-		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
-	<reference id="messagingService"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
-	<reference id="messageFactory"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
-	<reference id="entityFactory"
-		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+	<reference id="pluginDao" interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
+	<reference id="taskDao" interface="tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao" />
+	<reference id="commandDao" interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
+	<reference id="agentDao" interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
+	<reference id="ldapService" interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="messagingService" interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
+	<reference id="messageFactory" interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
+	<reference id="entityFactory" interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+	<reference id="configurationService" interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
+	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
+	<reference id="localeService" interface="tr.org.liderahenk.lider.core.api.i18n.ILocaleService" />
+	<reference id="mailService"  interface="tr.org.liderahenk.lider.core.api.mail.IMailService" />
+	<reference id="mailAddressDao"  interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao" />
 	<reference-list id="taskAwareCommands"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand"
 		availability="optional">
 		<reference-listener bind-method="bindCommand" unbind-method="unbindCommand" ref="pluginNotifier" />
 	</reference-list>
-	<reference id="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
-	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
-	
-	
-	<reference id="mailService"  interface="tr.org.liderahenk.lider.core.api.mail.IMailService" />
-	<reference id="mailAddressDao"  interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao" />
 
 </blueprint>

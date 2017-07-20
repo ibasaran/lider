@@ -27,7 +27,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
@@ -52,16 +51,12 @@ public class PluginManagerImpl {
 
 	private IPluginDao pluginDao;
 	private IEntityFactory entityFactory;
-	private IConfigurationService configurationService;
 
 	public void init() {
 		logger.info("Initializing plugin manager.");
-		if (configurationService.getLiderDebugEnabled() == null
-				|| !configurationService.getLiderDebugEnabled().booleanValue()) {
-			Map<String, Object> propertiesMap = new HashMap<String, Object>();
-			propertiesMap.put("deleted", true);
-			pluginDao.updateByProperties(propertiesMap, null);
-		}
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("deleted", true);
+		pluginDao.updateByProperties(propertiesMap, null);
 	}
 
 	public void destroy() {
@@ -71,8 +66,8 @@ public class PluginManagerImpl {
 	public void bindPlugin(IPluginInfo pluginInfo) {
 		if (pluginInfo == null || pluginInfo.getPluginName() == null || pluginInfo.getPluginName().isEmpty()
 				|| pluginInfo.getPluginVersion() == null || pluginInfo.getPluginVersion().isEmpty()) {
-			logger.warn("Plugin name and version can't be empty or null. Passing registration of plugin: {}"
-					+ pluginInfo.toString());
+			logger.warn("Plugin name and version can't be empty or null. Passing registration of plugin: {}",
+					pluginInfo != null ? pluginInfo.toString() : "NULL");
 			return;
 		}
 		if (plugins == null) {
@@ -83,7 +78,7 @@ public class PluginManagerImpl {
 			Map<String, Object> propertiesMap = new HashMap<String, Object>();
 			propertiesMap.put("name", pluginInfo.getPluginName());
 			propertiesMap.put("version", pluginInfo.getPluginVersion());
-			List<? extends IPlugin> result = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
+			List<? extends IPlugin> result = pluginDao.findByProperties(null, propertiesMap, null, 1);
 			IPlugin plugin = result != null && !result.isEmpty() ? result.get(0) : null;
 			if (plugin != null) {
 				List<? extends IProfile> profiles = plugin.getProfiles();
@@ -133,14 +128,6 @@ public class PluginManagerImpl {
 	 */
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
-	}
-
-	/**
-	 * 
-	 * @param configurationService
-	 */
-	public void setConfigurationService(IConfigurationService configurationService) {
-		this.configurationService = configurationService;
 	}
 
 }
