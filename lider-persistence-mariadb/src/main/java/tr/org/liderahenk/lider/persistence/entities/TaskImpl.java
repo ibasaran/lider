@@ -85,6 +85,10 @@ public class TaskImpl implements ITask {
 	@Column(name = "MODIFY_DATE")
 	private Date modifyDate;
 
+	
+	@Column(name = "IS_MAIL_SEND")
+	private boolean isMailSend = false;
+	
 	public TaskImpl() {
 	}
 
@@ -253,6 +257,14 @@ public class TaskImpl implements ITask {
 	public String toString() {
 		return "TaskImpl [id=" + id + ", plugin=" + plugin + ", commandClsId=" + commandClsId + ", parameterMap="
 				+ parameterMap + "]";
+	}
+
+	public boolean isMailSend() {
+		return isMailSend;
+	}
+
+	public void setMailSend(boolean isMailSend) {
+		this.isMailSend = isMailSend;
 	}
 
 }

@@ -129,7 +129,14 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				return;
 			}
 
-			sendMail(request, plugin, task, entries);
+			
+			if(task.getCronExpression()==null)
+			{
+				sendMail(request, plugin, task, entries);
+			}
+			else if(task.getCronExpression()!=null && !task.isMailSend()){
+				sendMail(request, plugin, task, entries);
+			}
 
 			// Otherwise handle task
 			handleTaskExecution(task, command, plugin.isUsesFileTransfer(), entries);
@@ -166,9 +173,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					+ new SimpleDateFormat("dd-MM-yyyy H:m").format(new Date()) + " tarihinde " + request.getCommandId()
 					+ " görevi göndermiştir. \n";
 			mailContent += "Görev toplam " + onlineEntries.size() + " adet istemciye ulaşmıştır. \n";
+			
+			if(offlineEntries.size() >0) {
 			mailContent += "Görev toplam " + offlineEntries.size() + " adet istemciye ulaşmamıştır. \n";
 			mailContent += "Görev ulaşmayan istemciler : " + offlineEntriesStr;
-
+			}
 			if (mailSubject != null && mailContent != null) {
 
 				List<? extends IMailAddress> mailAddressList = getMailAddressDao().findByProperty(IMailAddress.class,
@@ -178,9 +187,17 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				for (IMailAddress iMailAddress : mailAddressList) {
 					toList.add(iMailAddress.getMailAddress());
 				}
-				if (toList.size() > 0)
+				if (toList.size() > 0){
 					getMailService().sendMail(toList, mailSubject, mailContent);
-
+				
+					try {
+						task.setMailSend(true);
+						taskDao.update(task);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
