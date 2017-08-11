@@ -71,6 +71,7 @@ public class MailServiceImpl implements IMailService {
 			properties = System.getProperties();
 			String mailPropertyPrefix = configurationService.getMailSmtpSslEnable() ? "mail.smtps." : "mail.smtp.";
 			properties.put(mailPropertyPrefix + "port", configurationService.getMailSmtpPort().toString());
+			properties.put(mailPropertyPrefix + "defaultPort", configurationService.getMailSmtpPort().toString());
 			properties.put(mailPropertyPrefix + "auth", configurationService.getMailSmtpAuth() ? "true" : "false");
 			properties.put(mailPropertyPrefix + "starttls.enable",
 					configurationService.getMailSmtpStartTlsEnable() ? "true" : "false");
@@ -95,7 +96,7 @@ public class MailServiceImpl implements IMailService {
 			// Get SMTP transport
 			Transport transport = session.getTransport("smtp");
 			// Enter your correct GMail UserID and Password
-			transport.connect(configurationService.getMailHost(), configurationService.getMailAddress(),
+			transport.connect(configurationService.getMailHost(),configurationService.getMailSmtpPort(), configurationService.getMailAddress(),
 					configurationService.getMailPassword());
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
