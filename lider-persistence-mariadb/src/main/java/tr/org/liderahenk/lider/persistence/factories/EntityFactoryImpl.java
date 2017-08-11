@@ -218,8 +218,8 @@ public class EntityFactoryImpl implements IEntityFactory {
 	}
 
 	@Override
-	public IUserSession createUserSession(String username, SessionEvent sessionEvent) {
-		return new UserSessionImpl(null, null, username, sessionEvent, new Date());
+	public IUserSession createUserSession(String username, String userIp, SessionEvent sessionEvent ) {
+		return new UserSessionImpl(null, null, username, userIp, sessionEvent, new Date());
 	}
 
 	@Override

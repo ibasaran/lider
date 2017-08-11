@@ -62,6 +62,12 @@ public class UserSessionImpl implements IUserSession {
 
 	@Column(name = "USERNAME", nullable = false)
 	private String username;
+	
+	/**
+	 * for user thin client 
+	 */
+	@Column(name = "USERIP", nullable = false)
+	private String userIp;
 
 	@Column(name = "SESSION_EVENT", nullable = false, length = 1)
 	private Integer sessionEvent;
@@ -73,11 +79,12 @@ public class UserSessionImpl implements IUserSession {
 	public UserSessionImpl() {
 	}
 
-	public UserSessionImpl(Long id, AgentImpl agent, String username, SessionEvent sessionEvent, Date createDate) {
+	public UserSessionImpl(Long id, AgentImpl agent, String username, String userIp, SessionEvent sessionEvent, Date createDate) {
 		super();
 		this.id = id;
 		this.agent = agent;
 		this.username = username;
+		this.userIp=userIp;
 		setSessionEvent(sessionEvent);
 		this.createDate = createDate;
 	}

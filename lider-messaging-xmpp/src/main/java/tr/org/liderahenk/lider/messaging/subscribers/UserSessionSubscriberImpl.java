@@ -62,8 +62,7 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 
 		if (agent != null) {
 			// Add new user session info
-			IUserSession userSession = entityFactory.createUserSession(message.getUsername(),
-					getSessionEvent(message.getType()));
+			IUserSession userSession = entityFactory.createUserSession(message.getUsername(), message.getUserIp(),getSessionEvent(message.getType()));
 			agent.addUserSession(userSession);
 			if (message.getType() == AgentMessageType.LOGIN
 					&& (message.getIpAddresses() == null || message.getIpAddresses().isEmpty())) {

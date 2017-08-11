@@ -71,7 +71,6 @@ public class MailServiceImpl implements IMailService {
 			properties = System.getProperties();
 			String mailPropertyPrefix = configurationService.getMailSmtpSslEnable() ? "mail.smtps." : "mail.smtp.";
 			properties.put(mailPropertyPrefix + "port", configurationService.getMailSmtpPort().toString());
-			properties.put(mailPropertyPrefix + "defaultPort", configurationService.getMailSmtpPort().toString());
 			properties.put(mailPropertyPrefix + "auth", configurationService.getMailSmtpAuth() ? "true" : "false");
 			properties.put(mailPropertyPrefix + "starttls.enable",
 					configurationService.getMailSmtpStartTlsEnable() ? "true" : "false");
