@@ -181,6 +181,7 @@ public class MailNotifier {
 						String mailSubject = "Lider Ahenk Politikası";
 						StringBuilder mailContent = new StringBuilder();
 						final List<String> toList = new ArrayList<String>();
+						final List<String> toAdminList = new ArrayList<String>();
 
 						boolean mailSend = false;
 						boolean hasContent = false;
@@ -207,7 +208,7 @@ public class MailNotifier {
 											IMailAddress.class, "plugin.id", profile.getPlugin().getId(), 0);
 									if (mailAddressList != null) {
 										for (IMailAddress iMailAddress : mailAddressList) {
-											toList.add(iMailAddress.getMailAddress());
+											toAdminList.add(iMailAddress.getMailAddress());
 										}
 									}
 								}
@@ -222,40 +223,12 @@ public class MailNotifier {
 							mailContent.append(StringUtils.join(plugins, ","));
 							// LDAP entries and their details (TCK, username
 							// etc)
-							mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
-							mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
-								@Override
-								public String getValue(Object object) {
-									if (object instanceof LdapEntry) {
-										LdapEntry entry = (LdapEntry) object;
-										Map<String, String> attributes = entry.getAttributes();
-										List<String> attrStr = new ArrayList<String>();
-										if (attributes != null) {
-											for (Entry<String, String> attr : attributes.entrySet()) {
-												// Ignore liderPrivilege
-												// attribute...
-												if (attr.getKey().equalsIgnoreCase(
-														configurationService.getUserLdapPrivilegeAttribute())) {
-													continue;
-												}
-												attrStr.add(attr.getKey() + "=" + attr.getValue());
-											}
-											String email = attributes.get(configurationService.getLdapEmailAttribute());
-											// Add personnel email to recipients
-											if (email != null && !email.isEmpty()) {
-												toList.add(email);
-											}
-										}
-										return "DN: " + entry.getDistinguishedName() + " Öznitelikler: ["
-												+ StringUtils.join(attrStr, ",") + "]";
-									}
-									return LiderCoreUtils.EMPTY;
-								}
-							}));
+							
+							
 							mailContent
 									.append("\n\nPolitika sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
 
-							if (toList.size() > 0) {
+							if (toAdminList.size() > 0) {
 								logger.debug("Appending policy results to mail content.");
 								for (ICommandExecution execution : command.getCommandExecutions()) {
 									for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
@@ -278,10 +251,59 @@ public class MailNotifier {
 								}
 
 								if (hasContent) {
-									logger.debug("Sending mail notification.");
-									String body = mailContent.toString();
-									logger.debug("Task mail content: {}", body);
-									mailService.sendMail(toList, mailSubject, body);
+									
+									// splitted admin and unauthorized user mails.
+									String unaouthorizedUserBody = mailContent.toString();
+									
+									if (toAdminList.size() > 0){
+										mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
+										mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
+											@Override
+											public String getValue(Object object) {
+												if (object instanceof LdapEntry) {
+													LdapEntry entry = (LdapEntry) object;
+													Map<String, String> attributes = entry.getAttributes();
+													List<String> attrStr = new ArrayList<String>();
+													if (attributes != null) {
+														for (Entry<String, String> attr : attributes.entrySet()) {
+															// Ignore liderPrivilege
+															// attribute...
+															if (attr.getKey().equalsIgnoreCase(
+																	configurationService.getUserLdapPrivilegeAttribute())) {
+																continue;
+															}
+															attrStr.add(attr.getKey() + "=" + attr.getValue());
+														}
+														String email = attributes.get(configurationService.getLdapEmailAttribute());
+														// Add personnel email to recipients
+														if (email != null && !email.isEmpty()) {
+															toList.add(email);
+														}
+													}
+													return "DN: " + entry.getDistinguishedName() + " Öznitelikler: ["
+															+ StringUtils.join(attrStr, ",") + "]";
+												}
+												return LiderCoreUtils.EMPTY;
+											}
+										}));
+										
+										
+										logger.debug("Sending admin mail notification.");
+										String body = mailContent.toString();
+										logger.debug("Task admin mail content: {}", body);
+										mailService.sendMail(toAdminList, mailSubject, body);
+										
+										
+										if (toList.size() > 0){
+											logger.debug("Sending unaothorized user mail notification.");
+											mailService.sendMail(toList, mailSubject, unaouthorizedUserBody);
+											logger.debug("Task admin mail content: {}", unaouthorizedUserBody);
+										}
+									}
+									
+									
+									
+									
 								}
 
 								// Mark command as 'sent mail'
