@@ -51,7 +51,7 @@ public class MailServiceImpl implements IMailService {
 
 	@Override
 	public void sendMail(List<String> toList, String subject, String body) {
-		sendMail(toList, subject, body, "text/plain; charset=ISO-8859-9");
+		sendMail(toList, subject, body, "text/plain; charset=UTF-8");
 	}
 
 	@Override
