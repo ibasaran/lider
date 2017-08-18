@@ -46,12 +46,14 @@ import tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IMailAddress;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
@@ -360,20 +362,39 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	@Override
 	public IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd,
-			Integer status, Integer maxResults) {
+			Integer status, Integer maxResults, String containsPlugin, DNType dnType) {
 		// Try to find command results
 		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd,
-				status, maxResults);
+				status, maxResults, containsPlugin);
 		List<AppliedPolicy> policies = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {
 			policies = new ArrayList<AppliedPolicy>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 4) {
+				if (arr.length != 5) {
 					continue;
 				}
-				AppliedPolicy policy = new AppliedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2],
-						(Integer) arr[3]);
+				IPolicy pol = (IPolicy) arr[0];
+				ICommand cmd = (ICommand) arr[1];
+				// Filter by plugin name!
+				if (containsPlugin != null && !containsPlugin(containsPlugin, pol)) {
+					continue;
+				}
+				// Filter by DN type (user, OU etc)
+				if (dnType != null && dnType != DNType.ALL) {
+					boolean result = true;
+					for (ICommandExecution exec : cmd.getCommandExecutions()) {
+						if (dnType != exec.getDnType()) {
+							result = false;
+							break;
+						}
+					}
+					if (!result) {
+						continue;
+					}
+				}
+				AppliedPolicy policy = new AppliedPolicy(pol, (Integer) arr[2], (Integer) arr[3], (Integer) arr[4],
+						cmd);
 				policies.add(policy);
 			}
 		}
@@ -387,6 +408,18 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		}
 
 		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
+	}
+
+	private boolean containsPlugin(String containsPlugin, IPolicy pol) {
+		if (pol.getProfiles() == null || pol.getProfiles().size() == 0) {
+			return false;
+		}
+		for (IProfile profile : pol.getProfiles()) {
+			if (profile.getPlugin().getName().equalsIgnoreCase(containsPlugin)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.web.controller.utils.ControllerUtils;
@@ -72,7 +73,9 @@ public class PolicyController {
 	public IRestResponse executePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/policy/execute' Body: {}",
+				requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE
+						? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.execute(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -91,7 +94,9 @@ public class PolicyController {
 	public IRestResponse addPolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/policy/add' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/policy/add' Body: {}",
+				requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE
+						? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.add(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -110,7 +115,9 @@ public class PolicyController {
 	public IRestResponse updatePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/policy/update' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/policy/update' Body: {}",
+				requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE
+						? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.update(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -191,14 +198,17 @@ public class PolicyController {
 			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
 			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
 			@RequestParam(value = "status", required = false) Integer status,
+			@RequestParam(value = "containsPlugin", required = false) String containsPlugin,
+			@RequestParam(value = "dnType", required = false) DNType dnType,
 			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
-					throws UnsupportedEncodingException {
+			throws UnsupportedEncodingException {
 		logger.info(
-				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}'",
-				new Object[] { label, createDateRangeStart, createDateRangeEnd, status, maxResults });
+				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}&containsPlugin={}&dnType={}'",
+				new Object[] { label, createDateRangeStart, createDateRangeEnd, status, maxResults, containsPlugin,
+						dnType });
 		IRestResponse restResponse = policyProcessor.listAppliedPolicies(label,
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
-				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults);
+				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults, containsPlugin, dnType);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
@@ -234,4 +244,3 @@ public class PolicyController {
 	}
 
 }
-

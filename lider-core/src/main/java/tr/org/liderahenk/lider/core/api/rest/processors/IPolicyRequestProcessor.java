@@ -21,6 +21,7 @@ package tr.org.liderahenk.lider.core.api.rest.processors;
 
 import java.util.Date;
 
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 /**
@@ -83,7 +84,7 @@ public interface IPolicyRequestProcessor {
 	 * @return
 	 */
 	IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status,
-			Integer maxResults);
+			Integer maxResults, String containsPlugin, DNType dnType);
 
 	/**
 	 * 

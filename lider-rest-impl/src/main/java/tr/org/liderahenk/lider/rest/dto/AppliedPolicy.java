@@ -19,11 +19,16 @@
 */
 package tr.org.liderahenk.lider.rest.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 
 /**
@@ -50,7 +55,15 @@ public class AppliedPolicy implements Serializable {
 
 	private Integer errorResults;
 
-	public AppliedPolicy(IPolicy policy, Integer successResults, Integer warningResults, Integer errorResults) {
+	// FIXME temporary MSB solution. Need to change JSON structure altogether
+	private String policy;
+
+	private Date applyDate;
+	private Date activationDate;
+	private Date expirationDate;
+
+	public AppliedPolicy(IPolicy policy, Integer successResults, Integer warningResults, Integer errorResults,
+			ICommand cmd) {
 		super();
 		this.id = policy.getId();
 		this.label = policy.getLabel();
@@ -58,6 +71,18 @@ public class AppliedPolicy implements Serializable {
 		this.successResults = successResults;
 		this.warningResults = warningResults;
 		this.errorResults = errorResults;
+		try {
+			this.policy = new ObjectMapper().writeValueAsString(policy);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.applyDate = cmd.getCreateDate();
+		this.activationDate = cmd.getActivationDate();
+		this.expirationDate = cmd.getExpirationDate();
 	}
 
 	public Long getId() {
@@ -106,6 +131,38 @@ public class AppliedPolicy implements Serializable {
 
 	public void setWarningResults(Integer warningResults) {
 		this.warningResults = warningResults;
+	}
+
+	public String getPolicy() {
+		return policy;
+	}
+
+	public void setPolicy(String policy) {
+		this.policy = policy;
+	}
+
+	public Date getApplyDate() {
+		return applyDate;
+	}
+
+	public void setApplyDate(Date applyDate) {
+		this.applyDate = applyDate;
+	}
+
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 }

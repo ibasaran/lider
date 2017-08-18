@@ -145,7 +145,7 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @return
 	 */
 	List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status,
-			Integer maxResults);
+			Integer maxResults, String containsPlugin);
 
 	/**
 	 * 

@@ -302,16 +302,16 @@ public class CommandDaoImpl implements ICommandDao {
 		return resultList;
 	}
 
-	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = "SELECT p, "
+	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = "SELECT p, c, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_warning then 1 ELSE 0 END) as warning, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
-			+ "##WHERE## GROUP BY p ORDER BY p.createDate DESC";
+			+ "##WHERE## GROUP BY p, c ORDER BY p.createDate DESC";
 
 	@Override
 	public List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd,
-			Integer status, Integer maxResults) {
+			Integer status, Integer maxResults, String containsPlugin) {
 		String sql = FIND_POLICY_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
 		List<String> whereConditions = new ArrayList<String>();
@@ -325,6 +325,11 @@ public class CommandDaoImpl implements ICommandDao {
 			params.put("startDate", createDateRangeStart);
 			params.put("endDate", createDateRangeEnd);
 		}
+		// FIXME No way to do this in this version of OpenJPA..! We'll just filter the results accordingly.
+//		if (containsPlugin != null && !containsPlugin.isEmpty()) {
+//			whereConditions.add("TODO");
+//			params.put("containsPlugin", containsPlugin);
+//		}
 		// Dynamically generate where condition according to collected
 		// parameters
 		if (whereConditions.size() > 0) {
