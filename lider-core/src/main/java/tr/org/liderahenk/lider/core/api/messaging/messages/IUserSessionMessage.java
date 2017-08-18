@@ -40,5 +40,7 @@ public interface IUserSessionMessage extends IAgentMessage {
 	 * @return comma-separated IP addresses
 	 */
 	String getIpAddresses();
+	
+	String getUserIp();
 
 }

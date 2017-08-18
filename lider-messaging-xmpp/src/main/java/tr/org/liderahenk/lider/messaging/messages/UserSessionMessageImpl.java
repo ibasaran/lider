@@ -44,8 +44,11 @@ public class UserSessionMessageImpl implements IUserSessionMessage {
 	private String username;
 
 	private String ipAddresses;
+	
+	private String userIp; // for ltsp user sessions
 
 	private Date timestamp;
+	
 
 	@Override
 	public AgentMessageType getType() {
@@ -90,6 +93,14 @@ public class UserSessionMessageImpl implements IUserSessionMessage {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public void setUserIp(String userIp) {
+		this.userIp = userIp;
+	}
+
+	public String getUserIp() {
+		return userIp;
 	}
 
 }

@@ -44,7 +44,7 @@ public class OnlineUsersReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getQuery() {
-		return "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn "
+		return "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn, us.userIp as USER_IP "
 				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" 
 				+ " WHERE us.sessionEvent = 1 "
 				+ "	AND NOT EXISTS (select 1 from UserSessionImpl logout where logout.sessionEvent = 2 and logout.agent = us.agent "

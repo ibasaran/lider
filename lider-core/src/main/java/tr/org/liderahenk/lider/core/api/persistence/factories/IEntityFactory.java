@@ -216,7 +216,7 @@ public interface IEntityFactory {
 	 * @param sessionEvent
 	 * @return
 	 */
-	IUserSession createUserSession(String username, SessionEvent sessionEvent);
+	IUserSession createUserSession(String username, String userIp, SessionEvent sessionEvent);
 
 	/**
 	 * 
