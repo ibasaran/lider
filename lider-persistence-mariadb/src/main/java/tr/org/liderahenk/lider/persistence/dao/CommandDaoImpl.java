@@ -420,7 +420,7 @@ public class CommandDaoImpl implements ICommandDao {
 	
 	@Override
 	public List<? extends ICommand> findPolicyCommandsWithMailNotification() {
-		logger.error("QUERY!!!!!");
+		logger.debug("Finding Policy Command for mail notification...");
 		Query query = entityManager.createQuery(FIND_POLICY_COMMANDS_WITH_MAIL_NOTIFICATION);
 		query.setParameter("policyEndingStates", StatusCode.getPolicyEndingStateIds());
 		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
