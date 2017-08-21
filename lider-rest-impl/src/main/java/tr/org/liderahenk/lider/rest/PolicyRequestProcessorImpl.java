@@ -38,6 +38,9 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
+import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.mail.IMailService;
@@ -369,6 +372,30 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		List<AppliedPolicy> policies = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {
+			// FIXME MSB solution to list applied policies under an
+			// organizational unit:
+			ArrayList<String> targetDnList = new ArrayList<String>();
+			targetDnList.add(dn);
+			if (dnType != null && dnType == DNType.ORGANIZATIONAL_UNIT && dn != null && !dn.isEmpty()) {
+				List<LdapSearchFilterAttribute> filterAttributes = new ArrayList<LdapSearchFilterAttribute>();
+				String[] groupLdapObjectClasses = configService.getUserLdapObjectClasses().split(",");
+				for (String groupObjCls : groupLdapObjectClasses) {
+					filterAttributes
+							.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, SearchFilterEnum.EQ));
+				}
+				try {
+					List<LdapEntry> entries = ldapService.search(dn, filterAttributes,
+							new String[] { configService.getUserLdapUidAttribute() });
+					if (entries != null) {
+						for (LdapEntry entry : entries) {
+							targetDnList.add(entry.getDistinguishedName());
+						}
+					}
+				} catch (LdapException e) {
+					e.printStackTrace();
+				}
+			}
+
 			policies = new ArrayList<AppliedPolicy>();
 			for (Object[] arr : resultList) {
 				if (arr.length != 5) {
@@ -397,7 +424,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				if (dn != null) {
 					boolean result = false;
 					for (ICommandExecution exec : cmd.getCommandExecutions()) {
-						if (exec.getDn().equalsIgnoreCase(dn)) {
+						if (targetDnList.contains(exec.getDn())) {
 							result = true;
 							break;
 						}

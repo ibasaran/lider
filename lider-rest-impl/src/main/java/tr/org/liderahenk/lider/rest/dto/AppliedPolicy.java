@@ -21,7 +21,9 @@ package tr.org.liderahenk.lider.rest.dto;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -29,6 +31,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 
 /**
@@ -57,10 +60,10 @@ public class AppliedPolicy implements Serializable {
 
 	// FIXME temporary MSB solution. Need to change JSON structure altogether
 	private String policy;
-
 	private Date applyDate;
 	private Date activationDate;
 	private Date expirationDate;
+	private List<String> uidList;
 
 	public AppliedPolicy(IPolicy policy, Integer successResults, Integer warningResults, Integer errorResults,
 			ICommand cmd) {
@@ -83,6 +86,14 @@ public class AppliedPolicy implements Serializable {
 		this.applyDate = cmd.getCreateDate();
 		this.activationDate = cmd.getActivationDate();
 		this.expirationDate = cmd.getExpirationDate();
+		this.uidList = new ArrayList<String>();
+		if (cmd.getCommandExecutions() != null) {
+			for (ICommandExecution exec : cmd.getCommandExecutions()) {
+				if (exec.getUid() == null)
+					continue;
+				this.uidList.add(exec.getUid());
+			}
+		}
 	}
 
 	public Long getId() {
@@ -163,6 +174,14 @@ public class AppliedPolicy implements Serializable {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public List<String> getUidList() {
+		return uidList;
+	}
+
+	public void setUidList(List<String> uidList) {
+		this.uidList = uidList;
 	}
 
 }
