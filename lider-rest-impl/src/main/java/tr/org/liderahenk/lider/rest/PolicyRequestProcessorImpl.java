@@ -362,7 +362,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	@Override
 	public IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd,
-			Integer status, Integer maxResults, String containsPlugin, DNType dnType) {
+			Integer status, Integer maxResults, String containsPlugin, DNType dnType, String dn) {
 		// Try to find command results
 		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd,
 				status, maxResults, containsPlugin);
@@ -386,6 +386,19 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 					for (ICommandExecution exec : cmd.getCommandExecutions()) {
 						if (dnType != exec.getDnType()) {
 							result = false;
+							break;
+						}
+					}
+					if (!result) {
+						continue;
+					}
+				}
+				// Filter by dn
+				if (dn != null) {
+					boolean result = false;
+					for (ICommandExecution exec : cmd.getCommandExecutions()) {
+						if (exec.getDn().equalsIgnoreCase(dn)) {
+							result = true;
 							break;
 						}
 					}

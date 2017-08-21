@@ -200,15 +200,17 @@ public class PolicyController {
 			@RequestParam(value = "status", required = false) Integer status,
 			@RequestParam(value = "containsPlugin", required = false) String containsPlugin,
 			@RequestParam(value = "dnType", required = false) DNType dnType,
+			@RequestParam(value = "dn", required = false) String dn,
 			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info(
-				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}&containsPlugin={}&dnType={}'",
+				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}&containsPlugin={}&dnType={}&dn={}'",
 				new Object[] { label, createDateRangeStart, createDateRangeEnd, status, maxResults, containsPlugin,
-						dnType });
+						dnType, dn });
 		IRestResponse restResponse = policyProcessor.listAppliedPolicies(label,
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
-				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults, containsPlugin, dnType);
+				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults, containsPlugin,
+				dnType, dn);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

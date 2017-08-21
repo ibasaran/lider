@@ -84,7 +84,7 @@ public interface IPolicyRequestProcessor {
 	 * @return
 	 */
 	IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status,
-			Integer maxResults, String containsPlugin, DNType dnType);
+			Integer maxResults, String containsPlugin, DNType dnType, String dn);
 
 	/**
 	 * 
