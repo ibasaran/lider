@@ -60,7 +60,7 @@ public class MailServiceImpl implements IMailService {
 			throw new IllegalArgumentException("toList was null!");
 		}
 
-		logger.debug("Sending mail to: {}, with subject: {} and body: {}", new Object[] { toList, subject, body });
+		logger.info("Sending mail to: {}, with subject: {} and body: {}", new Object[] { toList, subject, body });
 
 		Properties properties;
 		Session session;

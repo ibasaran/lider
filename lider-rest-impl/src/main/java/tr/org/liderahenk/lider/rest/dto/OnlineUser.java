@@ -21,6 +21,7 @@ package tr.org.liderahenk.lider.rest.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class OnlineUser implements Serializable {
 
@@ -35,16 +36,23 @@ public class OnlineUser implements Serializable {
 	private String dn;
 
 	private String username;
+	
+	private List<UserAgent> agentList;
 
 	private Date createDate;
+	
+	public OnlineUser() {
+		// TODO Auto-generated constructor stub
+	}
 
-	public OnlineUser(Long agentId, String hostname, String ipAddresses, String dn, String username, Date createDate) {
+	public OnlineUser(Long agentId, String hostname, String ipAddresses, String dn, String username, Date createDate,  List<UserAgent> agentList) {
 		this.agentId = agentId;
 		this.hostname = hostname;
 		this.ipAddresses = ipAddresses;
 		this.dn = dn;
 		this.username = username;
 		this.createDate = createDate;
+		this.agentList=agentList;
 	}
 
 	public Long getAgentId() {
@@ -101,4 +109,13 @@ public class OnlineUser implements Serializable {
 				+ username + ", createDate=" + createDate + "]";
 	}
 
+	public List<UserAgent> getAgentList() {
+		return agentList;
+	}
+
+	public void setAgentList(List<UserAgent> agentList) {
+		this.agentList = agentList;
+	}
+
+	
 }

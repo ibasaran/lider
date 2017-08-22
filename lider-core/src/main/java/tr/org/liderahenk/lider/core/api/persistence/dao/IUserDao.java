@@ -34,7 +34,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
  * @see tr.org.liderahenk.lider.persistence.agent.dao.AgentDaoImpl
  *
  */
-public interface IAgentDao extends IBaseDao<IAgent> {
+public interface IUserDao extends IBaseDao<IAgent> {
 
 	/**
 	 * 
@@ -115,9 +115,5 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * @return
 	 */
 	List<Object[]> findAllOnlineUsers();
-	
-	List<Object[]> findAgentFromOnlineUsers(String userName);
-	
-	
 
 }

@@ -68,6 +68,18 @@
 		<property name="agentDao" ref="agentDao" />
 		<property name="responseFactory" ref="responseFactory" />
 	</bean>
+	
+	<service ref="userRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IUserRequestProcessor" />
+		
+	<bean id="userRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.UserRequestProcessorImpl">
+		<property name="agentDao" ref="agentDao" />
+		<property name="responseFactory" ref="responseFactory" />
+		<property name="messagingService" ref="messagingService" />
+		<property name="configService" ref="configService" />
+		
+	</bean>
 
 	<service ref="taskRequestProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />

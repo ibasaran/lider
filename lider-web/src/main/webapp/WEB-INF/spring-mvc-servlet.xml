@@ -98,4 +98,7 @@
 	<osgi:reference id="mailManagementProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.IMailManagementRequestProcessor" />
 		
+	<osgi:reference id="userRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IUserRequestProcessor" />
+		
 </beans>

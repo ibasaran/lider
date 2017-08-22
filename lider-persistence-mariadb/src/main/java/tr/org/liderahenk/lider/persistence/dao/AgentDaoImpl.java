@@ -260,5 +260,27 @@ public class AgentDaoImpl implements IAgentDao {
 		List<Object[]> resultList = query.getResultList();
 		return resultList;
 	}
+	
+	private static final String FIND_AGENT_FROM_ONLINE_USERS = 
+			"SELECT a.id, a.jid, a.hostname, a.ipAddresses,  a.dn, us.username, us.createDate, us.userIp "
+			+ "FROM UserSessionImpl us "
+			+ "INNER JOIN us.agent a "
+			+ "WHERE us.username= :username and us.sessionEvent = 1 AND NOT EXISTS "
+			+ "(SELECT 1 FROM UserSessionImpl logout "
+			+ "WHERE logout.sessionEvent = 2 and logout.agent = us.agent "
+			+ "AND logout.username = us.username AND logout.createDate > us.createDate) "
+			+ "ORDER BY us.createDate, us.username, a.dn";
+	
+	
+	@Override
+	public List<Object[]> findAgentFromOnlineUsers(String userName) {
+		Query query = entityManager.createQuery(FIND_AGENT_FROM_ONLINE_USERS);
+		query.setParameter("username", userName);
+		List<Object[]> resultList = query.getResultList();
+		return resultList;
+	}
+	
+	
+	
 
 }

@@ -122,7 +122,7 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 					continue;
 				}
 				OnlineUser policy = new OnlineUser((Long) arr[0], (String) arr[1], (String) arr[2], (String) arr[3],
-						(String) arr[4], (Date) arr[5]);
+						(String) arr[4], (Date) arr[5], null);
 				onlineUsers.add(policy);
 			}
 		}
