@@ -110,7 +110,7 @@ public class MailManagementRequestProcessorImpl implements IMailManagementReques
 				List<? extends IMailParameter> mailParameterList = mailParameterDao.findByProperty(IMailParameter.class, "plugin.id", plugin.getId(), 0);
 				
 						
-				logger.debug("Found mail list: {}", mailAddressList);
+				logger.info("Found mail list: {}", mailAddressList);
 
 				// Construct result map
 				Map<String, Object> resultMap = new HashMap<String, Object>();

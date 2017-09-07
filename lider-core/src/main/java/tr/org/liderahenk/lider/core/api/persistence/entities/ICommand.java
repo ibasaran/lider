@@ -92,5 +92,10 @@ public interface ICommand extends IEntity {
 	List<String> getUidList();
 
 	boolean isSentMail();
+	
+	boolean isMailThreadingActive();
+	
+	void setMailThreadingActive(boolean mailThreadingActive);
+	
 
 }

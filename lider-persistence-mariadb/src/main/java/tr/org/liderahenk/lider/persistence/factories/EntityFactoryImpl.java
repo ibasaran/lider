@@ -407,7 +407,11 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IMailContent createMailContent(IPlugin plugin, IMailContent content) {
 
-		return new MailContentImpl(null, content.getMailContent(), (PluginImpl) plugin, new Date(), null);
+		return new MailContentImpl(null, content.getMailContent(),
+				content.getMailSendStartegy(),content.getMailSchedulerCronString(),
+				
+				content.getMailSchdTimePeriod(), content.getMailSchdTimePeriodType(),
+				(PluginImpl) plugin, new Date(), null);
 	}
 
 	@Override

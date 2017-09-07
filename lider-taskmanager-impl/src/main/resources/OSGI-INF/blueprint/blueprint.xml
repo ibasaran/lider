@@ -38,6 +38,23 @@
 	<bean id="pluginNotifier"
 		class="tr.org.liderahenk.lider.taskmanager.notifiers.PluginNotifier">
 	</bean>
+	
+	
+	<service ref="mailManagerNotifier" interface="org.osgi.service.event.EventHandler">
+		<service-properties>
+			<entry key="event.topics" value="tr/org/liderahenk/task/status/received" />
+		</service-properties>
+	</service>
+	<bean id="mailManagerNotifier"
+		class="tr.org.liderahenk.lider.taskmanager.notifiers.MailManagerNotifier">
+		
+		<property name="commandDao" ref="commandDao" />
+		<property name="mailContentDao" ref="mailContentDao" />
+		<property name="mailAddressDao" ref="mailAddressDao" />
+		<property name="mailService" ref="mailService" />
+		<property name="localeService" ref="localeService" />
+	</bean>
+	
 
 	<bean id="mailNotifier"
 		class="tr.org.liderahenk.lider.taskmanager.notifiers.MailNotifier"
@@ -76,6 +93,7 @@
 	<reference id="localeService" interface="tr.org.liderahenk.lider.core.api.i18n.ILocaleService" />
 	<reference id="mailService"  interface="tr.org.liderahenk.lider.core.api.mail.IMailService" />
 	<reference id="mailAddressDao"  interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailAddressDao" />
+	<reference id="mailContentDao"	interface="tr.org.liderahenk.lider.core.api.persistence.dao.IMailContentDao" />
 	<reference-list id="taskAwareCommands"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand"
 		availability="optional">

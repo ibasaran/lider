@@ -98,8 +98,7 @@ public class MailNotifier {
 				for (ICommand command : commands) {
 					try {
 						// Build mail to_list
-						List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(IMailAddress.class,
-								"plugin.id", command.getTask().getPlugin().getId(), 0);
+						List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(IMailAddress.class,"plugin.id", command.getTask().getPlugin().getId(), 0);
 						List<String> toList = new ArrayList<String>();
 						for (IMailAddress iMailAddress : mailAddressList) {
 							toList.add(iMailAddress.getMailAddress());
@@ -318,14 +317,14 @@ public class MailNotifier {
 		// Tip: DO NOT use Timer when scheduling multiple threads! Use
 		// ScheduledThreadPoolExecutor instead!
 		// Thread executor for task mail notification
-		if (configurationService.getMailSendOnTaskCompletion()) {
-			logger.debug("Scheduled thread for task mail notification");
-			if (threadExecutor == null) {
-				threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(5);
-			}
-			threadExecutor.scheduleAtFixedRate(new TaskResultListener(), 10000,
-					configurationService.getMailCheckTaskCompletionPeriod(), TimeUnit.MILLISECONDS);
-		}
+//		if (configurationService.getMailSendOnTaskCompletion()) {
+//			logger.debug("Scheduled thread for task mail notification");
+//			if (threadExecutor == null) {
+//				threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(5);
+//			}
+//			threadExecutor.scheduleAtFixedRate(new TaskResultListener(), 10000,
+//					configurationService.getMailCheckTaskCompletionPeriod(), TimeUnit.MILLISECONDS);
+//		}
 		// Thread executor for policy mail notification
 		if (configurationService.getMailSendOnPolicyCompletion()) {
 			logger.debug("Scheduled thread for policy mail notification");

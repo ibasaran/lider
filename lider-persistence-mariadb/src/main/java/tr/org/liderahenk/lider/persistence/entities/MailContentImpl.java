@@ -31,8 +31,21 @@ public class MailContentImpl implements IMailContent {
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "MAIL_CONTENT",  length=4999, nullable = false)
+	@Column(name = "MAIL_CONTENT",  length=4999)
 	private String mailContent;
+	
+	@Column(name = "MAIL_SEND_STRATEGY")
+	private int mailSendStartegy;
+	
+	@Column(name = "MAIL_SCHEDULE_CRON_STR")
+	private String mailSchedulerCronString;
+	
+	@Column(name = "MAIL_SCHD_TIME_PERIOD")
+	private String mailSchdTimePeriod;
+	
+	@Column(name = "MAIL_SCHD_TIME_PERIOD_TYPE")
+	private int mailSchdTimePeriodType;
+	
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "PLUGIN_ID", nullable = false)
@@ -52,18 +65,31 @@ public class MailContentImpl implements IMailContent {
 	public MailContentImpl() {
 	}
 
-	public MailContentImpl(Long id, String mailContent, PluginImpl plugin, Date createDate, Date modifyDate) {
+	public MailContentImpl(Long id, String mailContent, int mailStrategy, 
+			String mailSchedulerCronString, 
+			String mailSchdTimePeriod,
+			Integer mailSchdTimePeriodType,
+			PluginImpl plugin, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.mailContent = mailContent;
 		this.plugin = plugin;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
+		this.mailSendStartegy=mailStrategy;
+		this.mailSchdTimePeriod=mailSchdTimePeriod;
+		this.mailSchdTimePeriodType=mailSchdTimePeriodType;
+		this.mailSchedulerCronString=mailSchedulerCronString;
 	}
 
 	public MailContentImpl(IMailContent mailContent) {
 		this.id = mailContent.getId();
 		this.mailContent = mailContent.getMailContent();
-
+		this.mailSendStartegy=mailContent.getMailSendStartegy();
+		this.mailSchedulerCronString=mailContent.getMailSchedulerCronString();
+		
+		this.mailSchdTimePeriod=mailContent.getMailSchdTimePeriod();
+		this.mailSchdTimePeriodType=mailContent.getMailSchdTimePeriodType();
+		
 		this.createDate = mailContent.getCreateDate();
 		this.modifyDate = mailContent.getModifyDate();
 
@@ -123,6 +149,38 @@ public class MailContentImpl implements IMailContent {
 
 	public void setMailContent(String mailContent) {
 		this.mailContent = mailContent;
+	}
+
+	public int getMailSendStartegy() {
+		return mailSendStartegy;
+	}
+
+	public void setMailSendStartegy(int mailSendStartegy) {
+		this.mailSendStartegy = mailSendStartegy;
+	}
+
+	public String getMailSchedulerCronString() {
+		return mailSchedulerCronString;
+	}
+
+	public void setMailSchedulerCronString(String mailSchedulerCronString) {
+		this.mailSchedulerCronString = mailSchedulerCronString;
+	}
+
+	public String getMailSchdTimePeriod() {
+		return mailSchdTimePeriod;
+	}
+
+	public void setMailSchdTimePeriod(String mailSchdTimePeriod) {
+		this.mailSchdTimePeriod = mailSchdTimePeriod;
+	}
+
+	public int getMailSchdTimePeriodType() {
+		return mailSchdTimePeriodType;
+	}
+
+	public void setMailSchdTimePeriodType(int mailSchdTimePeriodType) {
+		this.mailSchdTimePeriodType = mailSchdTimePeriodType;
 	}
 
 

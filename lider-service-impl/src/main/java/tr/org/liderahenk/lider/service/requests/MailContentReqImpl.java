@@ -5,19 +5,22 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IMailContent;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MailContentReqImpl implements IMailContent{
 	
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 53740692634262658L;
 	private Long id;
 	private String mailContent;
+	
+	private int mailSendStartegy;
+	
+	private String mailSchedulerCronString;
+	
+	private String mailSchdTimePeriod;
+	
+	private int mailSchdTimePeriodType;
 	
 	private PluginRequestImpl plugin;
 
@@ -64,5 +67,31 @@ public class MailContentReqImpl implements IMailContent{
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+	
+	public void setMailSendStartegy(int mailSendStartegy) {
+		this.mailSendStartegy = mailSendStartegy;
+	}
+	public String getMailSchedulerCronString() {
+		return mailSchedulerCronString;
+	}
+	public void setMailSchedulerCronString(String mailSchedulerCronString) {
+		this.mailSchedulerCronString = mailSchedulerCronString;
+	}
+	public int getMailSendStartegy() {
+		return mailSendStartegy;
+	}
+	public String getMailSchdTimePeriod() {
+		return mailSchdTimePeriod;
+	}
+	public void setMailSchdTimePeriod(String mailSchdTimePeriod) {
+		this.mailSchdTimePeriod = mailSchdTimePeriod;
+	}
+	public int getMailSchdTimePeriodType() {
+		return mailSchdTimePeriodType;
+	}
+	public void setMailSchdTimePeriodType(int mailSchdTimePeriodType) {
+		this.mailSchdTimePeriodType = mailSchdTimePeriodType;
+	}
+	
 
 }

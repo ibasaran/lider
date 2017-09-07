@@ -113,6 +113,12 @@ public class CommandImpl implements ICommand {
 	@Column(name = "SENT_MAIL")
 	private boolean sentMail = false;
 
+	
+	@Column(name = "MAIL_THREADING_ACTIVE")
+	private boolean mailThreadingActive = false;
+	
+	
+	
 	public CommandImpl() {
 	}
 
@@ -148,6 +154,7 @@ public class CommandImpl implements ICommand {
 		this.expirationDate = command.getExpirationDate();
 		this.createDate = command.getCreateDate();
 		this.sentMail = command.isSentMail();
+		this.mailThreadingActive=command.isMailThreadingActive();
 
 		// Convert ICommandExecution to CommandExecutionImpl
 		List<? extends ICommandExecution> tmpCommandExecutions = command.getCommandExecutions();
@@ -316,6 +323,17 @@ public class CommandImpl implements ICommand {
 				+ ", uidListJsonString=" + uidListJsonString + ", commandOwnerUid=" + commandOwnerUid
 				+ ", activationDate=" + activationDate + ", expirationDate=" + expirationDate + ", createDate="
 				+ createDate + ", commandExecutions=" + commandExecutions + ", sentMail=" + sentMail + "]";
+	}
+
+	@Override
+	public boolean isMailThreadingActive() {
+		return mailThreadingActive;
+	}
+
+	@Override
+	public void setMailThreadingActive(boolean mailThreadingActive) {
+		this.mailThreadingActive=mailThreadingActive;
+		
 	}
 
 }

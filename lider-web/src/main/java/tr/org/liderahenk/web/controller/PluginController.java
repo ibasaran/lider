@@ -109,10 +109,10 @@ public class PluginController {
 			,HttpServletRequest request)
 			throws UnsupportedEncodingException {
 
-		
+		logger.info("Request received. URL: '/lider/plugin/listMail' plugin id : "+pluginName +" version : "+version);
 		
 		IRestResponse restResponse = mailManagementProcessor.list(pluginName, version);
-		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 	
@@ -124,7 +124,7 @@ public class PluginController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/plugn/addMailConfiguration' Body: {}", requestBodyDecoded.length() > ControllerUtils.MAX_LOG_SIZE ? requestBodyDecoded.substring(0, ControllerUtils.MAX_LOG_SIZE) : requestBodyDecoded);
 		IRestResponse restResponse = mailManagementProcessor.add(requestBodyDecoded);
-		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
