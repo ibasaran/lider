@@ -65,10 +65,12 @@ public class MailManagerNotifier implements EventHandler {
 
 		IMailContent mailConfiguration = getMailSendingStrategy(pluginId);
 
-		logger.info("Mail Send Strategy for plugin {} is {}", new Object[] { task.getPlugin().getDescription(),
-				mailConfiguration.getMailSendStartegy() == 0 ? "" : "" });
+		
 
 		if(mailConfiguration!=null){
+			
+			logger.info("Mail Send Strategy for plugin {} is {}", new Object[] { task.getPlugin().getDescription(),
+				mailConfiguration.getMailSendStartegy() == 0 ? "" : "" });
 			
 			switch (mailConfiguration.getMailSendStartegy()) {
 			case 0: // SEND_MAIL_DIRECTLY
