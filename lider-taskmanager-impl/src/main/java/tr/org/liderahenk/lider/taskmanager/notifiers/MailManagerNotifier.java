@@ -222,9 +222,9 @@ public class MailManagerNotifier implements EventHandler {
 				}
 			}
 
-			if (ceList.size() == cerList.size()) {
-				this.threadExecutor.shutdown();
-			}
+//			if (ceList.size() == cerList.size()) {
+//				this.threadExecutor.shutdown();
+//			}
 
 			createAndSendMail(ceList, cerList, command);
 
