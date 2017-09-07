@@ -218,6 +218,9 @@ public class XMPPClientImpl {
 	 */
 	private void connect() {
 		connection = new XMPPTCPConnection(config);
+		logger.info("XMPP configuration packetReplyTimeout : " +packetReplyTimeout);
+		connection.setPacketReplyTimeout(packetReplyTimeout);
+		
 		// Retry connection if it fails.
 		while (!connection.isConnected() && retryCount < maxRetryConnectionCount) {
 			retryCount++;
