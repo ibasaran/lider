@@ -225,7 +225,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Görev Sonucu";
+				return "Görev Tarihi";
 			}
 
 			@Override
@@ -254,7 +254,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Görev tarihi";
+				return "Görev Sonucu";
 			}
 
 			@Override
