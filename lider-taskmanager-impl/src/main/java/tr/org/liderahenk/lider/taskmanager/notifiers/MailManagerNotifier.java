@@ -2,7 +2,9 @@ package tr.org.liderahenk.lider.taskmanager.notifiers;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -56,42 +58,39 @@ public class MailManagerNotifier implements EventHandler {
 		ITaskStatusMessage message = (ITaskStatusMessage) event.getProperty("message");
 		ICommandExecutionResult commanExecutionResult = (ICommandExecutionResult) event.getProperty("result");
 
-		
-		if(commanExecutionResult!=null){
-		
-		ITask task = commanExecutionResult.getCommandExecution().getCommand().getTask();
+		if (commanExecutionResult != null) {
 
-		long pluginId = task.getPlugin().getId();
+			ITask task = commanExecutionResult.getCommandExecution().getCommand().getTask();
 
-		IMailContent mailConfiguration = getMailSendingStrategy(pluginId);
+			long pluginId = task.getPlugin().getId();
 
-		
+			IMailContent mailConfiguration = getMailSendingStrategy(pluginId);
 
-		if(mailConfiguration!=null){
-			
-			logger.info("Mail Send Strategy for plugin {} is {}", new Object[] { task.getPlugin().getDescription(),
-				mailConfiguration.getMailSendStartegy() == 0 ? "" : "" });
-			
-			switch (mailConfiguration.getMailSendStartegy()) {
-			case 0: // SEND_MAIL_DIRECTLY
-				sendMailDirectly(commanExecutionResult, mailConfiguration);
-				break;
-	
-			case 1: // SEND_MAIL_WITH_SCHEDULER
-	
-				sendMailWithScheduler(commanExecutionResult, mailConfiguration);
-	
-				break;
-	
-			case 2:// SEND_MAIL_WITH_AGENT_TIMER No NEED
-	
-				sendMailWithAgentTimer(commanExecutionResult, mailConfiguration);
-				break;
-	
-			default:
-				break;
+			if (mailConfiguration != null) {
+
+				logger.info("Mail Send Strategy for plugin {} is {}", new Object[] { task.getPlugin().getDescription(),
+						mailConfiguration.getMailSendStartegy() == 0 ? "" : "" });
+
+				switch (mailConfiguration.getMailSendStartegy()) {
+				case 0: // SEND_MAIL_DIRECTLY
+					sendMailDirectly(commanExecutionResult, mailConfiguration);
+					break;
+
+				case 1: // SEND_MAIL_WITH_SCHEDULER
+
+					sendMailWithScheduler(commanExecutionResult, mailConfiguration);
+
+					break;
+
+				case 2:// SEND_MAIL_WITH_AGENT_TIMER No NEED
+
+					sendMailWithAgentTimer(commanExecutionResult, mailConfiguration);
+					break;
+
+				default:
+					break;
+				}
 			}
-		}
 		}
 	}
 
@@ -132,54 +131,55 @@ public class MailManagerNotifier implements EventHandler {
 		}
 
 	}
-	
+
 	/*
 	 * if mail have been not sending, ahenk mail content must be "";
 	 */
 	private void sendMailDirectly(ICommandExecutionResult commanExecutionResult, IMailContent mailConfiguration) {
-		
+
 		List<String> toList = getMailToList(commanExecutionResult.getCommandExecution().getCommand());
 
-		String mailContent=commanExecutionResult.getMailContent();
-		
-		String mailSubject=commanExecutionResult.getMailSubject();
-		
-		
-		if(mailSubject!=null){
+		String mailContent = commanExecutionResult.getMailContent();
+
+		String mailSubject = commanExecutionResult.getMailSubject();
+
+		if (mailSubject != null) {
 			mailSubject = "Lider Ahenk Görev Sonucu " + mailSubject;
 		}
-		
-		if(mailContent!=null && !"".equals(mailContent)){
-			ICommand  command=commanExecutionResult.getCommandExecution().getCommand();
-			
+
+		if (mailContent != null && !"".equals(mailContent)) {
+			ICommand command = commanExecutionResult.getCommandExecution().getCommand();
+
 			List<? extends ICommandExecution> ceList = command.getCommandExecutions();
 
 			List<ICommandExecutionResult> cerList = new ArrayList<ICommandExecutionResult>();
 
 			for (ICommandExecution iCommandExecution : ceList) {
-				List<? extends ICommandExecutionResult> commandExecutionResultList = iCommandExecution.getCommandExecutionResults();
+				List<? extends ICommandExecutionResult> commandExecutionResultList = iCommandExecution
+						.getCommandExecutionResults();
 				if (commandExecutionResultList != null && commandExecutionResultList.size() > 0) {
 					cerList.add(commandExecutionResultList.get(0));
 				}
 			}
-			StringBuilder mailContentBuilder= new StringBuilder();
-			
+			StringBuilder mailContentBuilder = new StringBuilder();
+
 			mailContentBuilder.append(command.getTask().getPlugin().getDescription()).append(" eklentisi ")
-			.append(format.format(command.getCreateDate())).append(" tarihinde ")
-			.append(command.getTask().getCommandClsId()).append(" görevi göndermiştir. \n").append("Görev toplam ")
-			.append(ceList.size())
-			.append(" adet istemci için çalıştırılmıştır. " + "\nGörev toplam " + cerList.size()
-					+ "adet istemciye ulaşmıştır. " + "\nGörev toplam " + (ceList.size() - cerList.size())
-					+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
-			
-			mailContent= mailContentBuilder.toString()+ mailContent;
+					.append(format.format(command.getCreateDate())).append(" tarihinde ")
+					.append(command.getTask().getCommandClsId()).append(" görevi göndermiştir. \n")
+					.append("Görev toplam ").append(ceList.size())
+					.append(" adet istemci için çalıştırılmıştır. " + "\nGörev toplam " + cerList.size()
+							+ "adet istemciye ulaşmıştır. " + "\nGörev toplam " + (ceList.size() - cerList
+									.size())
+							+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
+
+			mailContent = mailContentBuilder.toString() + mailContent;
 		}
-		
-		if(toList.size()>0 && mailContent!=null && !"".equals(mailContent) && !mailContent.isEmpty()){
-			
+
+		if (toList.size() > 0 && mailContent != null && !"".equals(mailContent) && !mailContent.isEmpty()) {
+
 			mailService.sendMail(toList, mailSubject, mailContent);
 		}
-	
+
 	}
 
 	// IMailContent hold mail configuration information
@@ -189,7 +189,7 @@ public class MailManagerNotifier implements EventHandler {
 
 		IMailContent mailContent = null;
 		if (list.size() > 0) {
-			mailContent = list.get(list.size()-1);
+			mailContent = list.get(list.size() - 1);
 		}
 		return mailContent;
 
@@ -210,21 +210,28 @@ public class MailManagerNotifier implements EventHandler {
 		public void run() {
 
 			command = commandDao.find(command.getId()); // find new execution result
+			
+			ITask task = command.getTask();
 
 			List<? extends ICommandExecution> ceList = command.getCommandExecutions();
 
 			List<ICommandExecutionResult> cerList = new ArrayList<ICommandExecutionResult>();
 
 			for (ICommandExecution iCommandExecution : ceList) {
-				List<? extends ICommandExecutionResult> commandExecutionResultList = iCommandExecution.getCommandExecutionResults();
+				List<? extends ICommandExecutionResult> commandExecutionResultList = iCommandExecution
+						.getCommandExecutionResults();
 				if (commandExecutionResultList != null && commandExecutionResultList.size() > 0) {
 					cerList.add(commandExecutionResultList.get(0));
 				}
 			}
-
-//			if (ceList.size() == cerList.size()) {
-//				this.threadExecutor.shutdown();
-//			}
+			
+			if(task.isDeleted()){
+				 this.threadExecutor.shutdown();
+			}
+			
+//			 if(ceList.size() == cerList.size() ) {
+//			 this.threadExecutor.shutdown();
+//			 }
 
 			createAndSendMail(ceList, cerList, command);
 
@@ -285,29 +292,29 @@ public class MailManagerNotifier implements EventHandler {
 			ICommand command) {
 		// Build mail to_list
 		List<String> toList = getMailToList(command);
-
-		String mailSubject = "";
-		StringBuilder mailContent = new StringBuilder();
-		boolean hasContent = false;
-
-		mailContent.append(command.getTask().getPlugin().getDescription()).append(" eklentisi ")
-				.append(format.format(command.getCreateDate())).append(" tarihinde ")
-				.append(command.getTask().getCommandClsId()).append(" görevi göndermiştir. \n").append("Görev toplam ")
-				.append(ceList.size())
-				.append(" adet istemci için çalıştırılmıştır. " + "\nGörev toplam " + cerList.size()
-						+ "adet istemciye ulaşmıştır. " + "\nGörev toplam " + (ceList.size() - cerList.size())
-						+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
-
 		if (toList.size() > 0) {
+			String mailSubject = "";
+			StringBuilder mailContent = new StringBuilder();
+			boolean hasContent = false;
+
+			mailContent.append(command.getTask().getPlugin().getDescription()).append(" eklentisi ")
+					.append(format.format(command.getCreateDate())).append(" tarihinde ")
+					.append(command.getTask().getCommandClsId()).append(" görevi göndermiştir. \n")
+					.append("Görev toplam ").append(ceList.size())
+					.append(" adet istemci için çalıştırılmıştır. " + "\nGörev toplam " + cerList.size()
+							+ "adet istemciye ulaşmıştır. " + "\nGörev toplam " + (ceList.size() - cerList.size())
+							+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
+
 			for (ICommandExecution execution : command.getCommandExecutions()) {
 
 				for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
-					
-					if (mailSubject.isEmpty() && result.getMailSubject() != null	&& !result.getMailSubject().isEmpty()) {
+
+					if (mailSubject.isEmpty() && result.getMailSubject() != null
+							&& !result.getMailSubject().isEmpty()) {
 
 						mailSubject = result.getMailSubject();
 					}
-					
+
 					if (StatusCode.getTaskEndingStates().contains(result.getResponseCode())
 							&& result.getMailContent() != null && !result.getMailContent().trim().isEmpty()) {
 						hasContent = true;
@@ -332,8 +339,13 @@ public class MailManagerNotifier implements EventHandler {
 	}
 
 	private List<String> getMailToList(ICommand command) {
-		List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(IMailAddress.class, "plugin.id",
-				command.getTask().getPlugin().getId(), 0);
+
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("plugin.id", command.getTask().getPlugin().getId());
+		propertiesMap.put("deleted", false);
+
+		List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperties(IMailAddress.class,
+				propertiesMap, null, 0);
 		List<String> toList = new ArrayList<String>();
 		for (IMailAddress iMailAddress : mailAddressList) {
 			toList.add(iMailAddress.getMailAddress());
