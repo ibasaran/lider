@@ -66,7 +66,7 @@ public class UserSessionImpl implements IUserSession {
 	/**
 	 * for user thin client 
 	 */
-	@Column(name = "USERIP", nullable = false)
+	@Column(name = "USERIP")
 	private String userIp;
 
 	@Column(name = "SESSION_EVENT", nullable = false, length = 1)

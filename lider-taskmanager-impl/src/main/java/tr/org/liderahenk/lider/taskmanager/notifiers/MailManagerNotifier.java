@@ -345,7 +345,7 @@ public class MailManagerNotifier implements EventHandler {
 		propertiesMap.put("deleted", false);
 
 		List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperties(IMailAddress.class,
-				propertiesMap, null, 0);
+				propertiesMap, null, null);
 		List<String> toList = new ArrayList<String>();
 		for (IMailAddress iMailAddress : mailAddressList) {
 			toList.add(iMailAddress.getMailAddress());
