@@ -210,7 +210,7 @@ public class MailManagerNotifier implements EventHandler {
 		public void run() {
 
 			command = commandDao.find(command.getId()); // find new execution result
-			
+
 			ITask task = command.getTask();
 
 			List<? extends ICommandExecution> ceList = command.getCommandExecutions();
@@ -224,14 +224,10 @@ public class MailManagerNotifier implements EventHandler {
 					cerList.add(commandExecutionResultList.get(0));
 				}
 			}
-			
-			if(task.isDeleted()){
-				 this.threadExecutor.shutdown();
-			}
-			
-//			 if(ceList.size() == cerList.size() ) {
-//			 this.threadExecutor.shutdown();
-//			 }
+
+			// if(ceList.size() == cerList.size() ) {
+			// this.threadExecutor.shutdown();
+			// }
 
 			createAndSendMail(ceList, cerList, command);
 
@@ -242,6 +238,14 @@ public class MailManagerNotifier implements EventHandler {
 				commandDao.update(command);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+			
+			if (task.isDeleted()) {
+				this.threadExecutor.shutdown();
+			}
+
+			if (!task.isDeleted() && task.getCronExpression() != null && ceList.size() == cerList.size()) {
+				this.threadExecutor.shutdown();
 			}
 
 		}

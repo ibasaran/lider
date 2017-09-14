@@ -420,7 +420,7 @@ public class CommandDaoImpl implements ICommandDao {
 			+ "INNER JOIN ce.commandExecutionResults cer "
 			+ "WHERE c.sentMail = False "
 			+ "AND cer.responseCode IN ( :policyEndingStates ) "
-			+ "AND (c.expirationDate IS NULL OR c.expirationDate < :today) " // ensure policy is continuous OR expired
+		//	+ "AND (c.expirationDate IS NULL OR c.expirationDate < :today) " // ensure policy is continuous OR expired
 			+ "ORDER BY c.createDate DESC";
 	
 	@Override
@@ -428,7 +428,7 @@ public class CommandDaoImpl implements ICommandDao {
 		logger.debug("Finding Policy Command for mail notification...");
 		Query query = entityManager.createQuery(FIND_POLICY_COMMANDS_WITH_MAIL_NOTIFICATION);
 		query.setParameter("policyEndingStates", StatusCode.getPolicyEndingStateIds());
-		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
+//		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
 		return (List<CommandImpl>) query.getResultList();
 	}
 

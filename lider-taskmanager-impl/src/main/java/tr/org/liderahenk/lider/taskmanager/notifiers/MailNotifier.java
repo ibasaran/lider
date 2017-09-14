@@ -21,6 +21,7 @@ package tr.org.liderahenk.lider.taskmanager.notifiers;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -184,9 +185,19 @@ public class MailNotifier {
 						boolean mailSend = false;
 						boolean hasContent = false;
 
+						
+						String policyCreateDate="";
+						String policyLabel="";
+						
+						if(command.getPolicy().getCreateDate()!=null)
+						policyCreateDate=format.format(command.getPolicy().getCreateDate());
+						
+						if(command.getPolicy().getLabel()!=null)
+							policyLabel=command.getPolicy().getLabel();
+						
 						mailContent.append("Aşağıda isimleri verilen eklentilerden oluşan \"")
-								.append(command.getPolicy().getLabel()).append("\" isimli politika ")
-								.append(format.format(command.getPolicy().getCreateDate()))
+								.append(policyLabel).append("\" isimli politika ")
+								.append(policyCreateDate)
 								.append(" tarihinde aşağıda detaylarıyla belirtilen LDAP ögelerine uygulanmıştır:\n\n");
 						mailContent.append("Politikayı oluşturan eklentiler:\n");
 
