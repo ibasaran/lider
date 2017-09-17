@@ -21,7 +21,7 @@
 		<feature>lider-core-bundles</feature>
 		<!-- Use 'lider-plugin-bundles' feature only to pre-install plugins on 
 			Karaf -->
-		<!--  <feature>lider-plugin-bundles</feature> --> 
+		  <feature>lider-plugin-bundles</feature> 
 	</feature>
 
 	<feature name="lider-core-bundles" description="${project.name}"
@@ -199,6 +199,14 @@
 		</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-manage-root-db/1.0.0
 		</bundle>
+		
+		<configfile finalname="/etc/tr.org.liderahenk.restore.cfg"
+			override="true">mvn:${groupId}/lider-restore/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:${groupId}/lider-restore/1.0.0
+		</bundle>
+		<bundle start-level="90">mvn:${groupId}/lider-restore-db/1.0.0
+		</bundle>
+
 
 
 

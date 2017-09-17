@@ -189,10 +189,10 @@ public class MailNotifier {
 						String policyCreateDate="";
 						String policyLabel="";
 						
-						if(command.getPolicy().getCreateDate()!=null)
+						if(command.getPolicy()!=null && command.getPolicy().getCreateDate()!=null)
 						policyCreateDate=format.format(command.getPolicy().getCreateDate());
 						
-						if(command.getPolicy().getLabel()!=null)
+						if(command.getPolicy()!=null  && command.getPolicy().getLabel()!=null)
 							policyLabel=command.getPolicy().getLabel();
 						
 						mailContent.append("Aşağıda isimleri verilen eklentilerden oluşan \"")
@@ -201,105 +201,108 @@ public class MailNotifier {
 								.append(" tarihinde aşağıda detaylarıyla belirtilen LDAP ögelerine uygulanmıştır:\n\n");
 						mailContent.append("Politikayı oluşturan eklentiler:\n");
 
-						Set<? extends IProfile> profiles = command.getPolicy().getProfiles();
-						List<String> plugins = new ArrayList<String>();
-						for (IProfile profile : profiles) {
-							Map<String, Object> profileData = profile.getProfileData();
-							// Plugin description
-							plugins.add(profile.getPlugin().getDescription());
-							if (profileData != null) {
-								Boolean mailSendParam = (Boolean) profileData.get("mailSend");
-								if (mailSendParam != null && mailSendParam.booleanValue()) {
-									// At least one profile wants to send mail!
-									mailSend = true;
-									// Add admin recipients
-									List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(
-											IMailAddress.class, "plugin.id", profile.getPlugin().getId(), 0);
-									if (mailAddressList != null) {
-										for (IMailAddress iMailAddress : mailAddressList) {
-											toList.add(iMailAddress.getMailAddress());
+						if(command.getPolicy()!=null ){
+						
+							Set<? extends IProfile> profiles = command.getPolicy().getProfiles();
+							List<String> plugins = new ArrayList<String>();
+							for (IProfile profile : profiles) {
+								Map<String, Object> profileData = profile.getProfileData();
+								// Plugin description
+								plugins.add(profile.getPlugin().getDescription());
+								if (profileData != null) {
+									Boolean mailSendParam = (Boolean) profileData.get("mailSend");
+									if (mailSendParam != null && mailSendParam.booleanValue()) {
+										// At least one profile wants to send mail!
+										mailSend = true;
+										// Add admin recipients
+										List<? extends IMailAddress> mailAddressList = mailAddressDao.findByProperty(
+												IMailAddress.class, "plugin.id", profile.getPlugin().getId(), 0);
+										if (mailAddressList != null) {
+											for (IMailAddress iMailAddress : mailAddressList) {
+												toList.add(iMailAddress.getMailAddress());
+											}
 										}
 									}
 								}
 							}
-						}
-
-						if (mailSend) {
-							logger.debug("At least one profile has mail content.");
-							List<LdapEntry> targetEntries = ldapService.findTargetEntries(command.getDnList(),
-									command.getDnType());
-
-							mailContent.append(StringUtils.join(plugins, ","));
-							// LDAP entries and their details (TCK, username
-							// etc)
-							mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
-							mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
-								@Override
-								public String getValue(Object object) {
-									if (object instanceof LdapEntry) {
-										LdapEntry entry = (LdapEntry) object;
-										Map<String, String> attributes = entry.getAttributes();
-										List<String> attrStr = new ArrayList<String>();
-										if (attributes != null) {
-											for (Entry<String, String> attr : attributes.entrySet()) {
-												// Ignore liderPrivilege
-												// attribute...
-												if (attr.getKey().equalsIgnoreCase(
-														configurationService.getUserLdapPrivilegeAttribute())) {
-													continue;
+	
+							if (mailSend) {
+								logger.debug("At least one profile has mail content.");
+								List<LdapEntry> targetEntries = ldapService.findTargetEntries(command.getDnList(),
+										command.getDnType());
+	
+								mailContent.append(StringUtils.join(plugins, ","));
+								// LDAP entries and their details (TCK, username
+								// etc)
+								mailContent.append("\n\nPolitikanın uygulandığı LDAP ögeleri:\n");
+								mailContent.append(LiderCoreUtils.join(targetEntries, ",\n", new StringJoinCursor() {
+									@Override
+									public String getValue(Object object) {
+										if (object instanceof LdapEntry) {
+											LdapEntry entry = (LdapEntry) object;
+											Map<String, String> attributes = entry.getAttributes();
+											List<String> attrStr = new ArrayList<String>();
+											if (attributes != null) {
+												for (Entry<String, String> attr : attributes.entrySet()) {
+													// Ignore liderPrivilege
+													// attribute...
+													if (attr.getKey().equalsIgnoreCase(
+															configurationService.getUserLdapPrivilegeAttribute())) {
+														continue;
+													}
+													attrStr.add(attr.getKey() + "=" + attr.getValue());
 												}
-												attrStr.add(attr.getKey() + "=" + attr.getValue());
+												String email = attributes.get(configurationService.getLdapEmailAttribute());
+												// Add personnel email to recipients
+												if (email != null && !email.isEmpty()) {
+													toList.add(email);
+												}
 											}
-											String email = attributes.get(configurationService.getLdapEmailAttribute());
-											// Add personnel email to recipients
-											if (email != null && !email.isEmpty()) {
-												toList.add(email);
+											return "DN: " + entry.getDistinguishedName() + " Öznitelikler: ["
+													+ StringUtils.join(attrStr, ",") + "]";
+										}
+										return LiderCoreUtils.EMPTY;
+									}
+								}));
+								mailContent
+										.append("\n\nPolitika sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
+	
+								if (toList.size() > 0) {
+									logger.debug("Appending policy results to mail content.");
+									for (ICommandExecution execution : command.getCommandExecutions()) {
+										for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
+											if (StatusCode.getPolicyEndingStates().contains(result.getResponseCode())
+													&& result.getMailContent() != null
+													&& !result.getMailContent().trim().isEmpty()) {
+												try {
+													hasContent = true;
+													mailContent.append("\n\nUID: ").append(execution.getUid())
+															.append(", Sonuç: ")
+															.append(localeService
+																	.getString(result.getResponseCode().toString()))
+															.append(", Mesaj:\n")
+															.append(replaceValues(result.getMailContent(), command));
+													break;
+												} catch (Exception e) {
+												}
 											}
 										}
-										return "DN: " + entry.getDistinguishedName() + " Öznitelikler: ["
-												+ StringUtils.join(attrStr, ",") + "]";
 									}
-									return LiderCoreUtils.EMPTY;
-								}
-							}));
-							mailContent
-									.append("\n\nPolitika sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
-
-							if (toList.size() > 0) {
-								logger.debug("Appending policy results to mail content.");
-								for (ICommandExecution execution : command.getCommandExecutions()) {
-									for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
-										if (StatusCode.getPolicyEndingStates().contains(result.getResponseCode())
-												&& result.getMailContent() != null
-												&& !result.getMailContent().trim().isEmpty()) {
-											try {
-												hasContent = true;
-												mailContent.append("\n\nUID: ").append(execution.getUid())
-														.append(", Sonuç: ")
-														.append(localeService
-																.getString(result.getResponseCode().toString()))
-														.append(", Mesaj:\n")
-														.append(replaceValues(result.getMailContent(), command));
-												break;
-											} catch (Exception e) {
-											}
-										}
+	
+									if (hasContent) {
+										logger.debug("Sending mail notification.");
+										String body = mailContent.toString();
+										logger.debug("Task mail content: {}", body);
+										mailService.sendMail(toList, mailSubject, body);
 									}
+	
+									// Mark command as 'sent mail'
+									// So that the notifier may ignore it from now
+									// on.
+									commandDao.update(entityFactory.createCommand(command, true));
 								}
-
-								if (hasContent) {
-									logger.debug("Sending mail notification.");
-									String body = mailContent.toString();
-									logger.debug("Task mail content: {}", body);
-									mailService.sendMail(toList, mailSubject, body);
 								}
-
-								// Mark command as 'sent mail'
-								// So that the notifier may ignore it from now
-								// on.
-								commandDao.update(entityFactory.createCommand(command, true));
 							}
-						}
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}

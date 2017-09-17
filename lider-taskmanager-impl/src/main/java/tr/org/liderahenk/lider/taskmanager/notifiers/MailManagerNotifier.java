@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -32,7 +36,7 @@ public class MailManagerNotifier implements EventHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(MailManagerNotifier.class);
 
-	private ScheduledThreadPoolExecutor threadExecutor;
+	private ScheduledThreadPoolExecutor threadExecutorMain;
 
 	public static int SEND_MAIL_DIRECTLY = 0;
 	public static int SEND_MAIL_WITH_SCHEDULER = 1;
@@ -69,7 +73,7 @@ public class MailManagerNotifier implements EventHandler {
 			if (mailConfiguration != null) {
 
 				logger.info("Mail Send Strategy for plugin {} is {}", new Object[] { task.getPlugin().getDescription(),
-						mailConfiguration.getMailSendStartegy() == 0 ? "" : "" });
+						mailConfiguration.getMailSendStartegy() == 0 ? "Hemen Gonder" : mailConfiguration.getMailSendStartegy() == 1 ? "Zamanlı Gönder " : "" });
 
 				switch (mailConfiguration.getMailSendStartegy()) {
 				case 0: // SEND_MAIL_DIRECTLY
@@ -119,15 +123,18 @@ public class MailManagerNotifier implements EventHandler {
 			break;
 		}
 
-		if (threadExecutor == null) {
-			threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1000);
+		if (threadExecutorMain == null) {
+			threadExecutorMain = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(45);
 		}
 
 		ICommand command = commanExecutionResult.getCommandExecution().getCommand();
 
 		if (!command.isMailThreadingActive()) {
+			
+			MailScheduler mailScheduler=	new MailScheduler(command, threadExecutorMain);
 
-			threadExecutor.scheduleAtFixedRate(new MailScheduler(command, threadExecutor), 0, period, type);
+			ScheduledFuture<?> futureTask= threadExecutorMain.scheduleAtFixedRate(mailScheduler, 0, period, type);
+			mailScheduler.setFutureTask(futureTask);
 		}
 
 	}
@@ -136,6 +143,8 @@ public class MailManagerNotifier implements EventHandler {
 	 * if mail have been not sending, ahenk mail content must be "";
 	 */
 	private void sendMailDirectly(ICommandExecutionResult commanExecutionResult, IMailContent mailConfiguration) {
+		
+		logger.info("Mail Sending directly");
 
 		List<String> toList = getMailToList(commanExecutionResult.getCommandExecution().getCommand());
 
@@ -197,23 +206,28 @@ public class MailManagerNotifier implements EventHandler {
 
 	class MailScheduler implements Runnable {
 
-		ICommand command;
+		ICommand commandScheduler;
 		ScheduledThreadPoolExecutor threadExecutor;
+		ScheduledFuture<?> futureTask;
 
 		public MailScheduler(tr.org.liderahenk.lider.core.api.persistence.entities.ICommand command,
 				ScheduledThreadPoolExecutor threadExecutor) {
-			this.command = command;
+			this.commandScheduler = command;
 			this.threadExecutor = threadExecutor;
 		}
 
 		@Override
 		public void run() {
+			
+			logger.info("Mail Sending with mail scheduler");
 
-			command = commandDao.find(command.getId()); // find new execution result
+			commandScheduler = commandDao.find(commandScheduler.getId()); // find new execution result
+			
+			logger.info("Command id : " + commandScheduler.getId());
 
-			ITask task = command.getTask();
+			ITask task = commandScheduler.getTask();
 
-			List<? extends ICommandExecution> ceList = command.getCommandExecutions();
+			List<? extends ICommandExecution> ceList = commandScheduler.getCommandExecutions();
 
 			List<ICommandExecutionResult> cerList = new ArrayList<ICommandExecutionResult>();
 
@@ -229,25 +243,45 @@ public class MailManagerNotifier implements EventHandler {
 			// this.threadExecutor.shutdown();
 			// }
 
-			createAndSendMail(ceList, cerList, command);
+			createAndSendMail(ceList, cerList, commandScheduler);
 
 			// flag to threading is starting
-			command.setMailThreadingActive(true);
+			commandScheduler.setMailThreadingActive(true);
 
 			try {
-				commandDao.update(command);
+				commandDao.update(commandScheduler);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
 			if (task.isDeleted()) {
-				this.threadExecutor.shutdown();
+				
+				logger.info("Thread executor will shutdown because Task is deleted task id : " + task.getId());
+				if(futureTask!=null){
+					futureTask.cancel(true);
+				}
+				
+//				this.threadExecutor.shutdown();
+//				
+//				threadExecutorMain=null;
 			}
 
-			if (!task.isDeleted() && task.getCronExpression() != null && ceList.size() == cerList.size()) {
-				this.threadExecutor.shutdown();
+			if (!task.isDeleted() && task.getCronExpression() == null && ceList.size() == cerList.size()) {
+				logger.info("Thread executor will shutdown because Task has not got cron expression and result is completed. Task id : " + task.getId());
+				
+				if(futureTask!=null){
+					futureTask.cancel(true);
+				}
 			}
 
+		}
+
+		public ScheduledFuture<?> getFutureTask() {
+			return futureTask;
+		}
+
+		public void setFutureTask(ScheduledFuture<?> futureTask) {
+			this.futureTask = futureTask;
 		}
 
 	}
@@ -356,5 +390,5 @@ public class MailManagerNotifier implements EventHandler {
 		}
 		return toList;
 	}
-
+	
 }

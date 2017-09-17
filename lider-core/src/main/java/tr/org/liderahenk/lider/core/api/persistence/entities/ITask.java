@@ -47,6 +47,8 @@ public interface ITask extends IEntity {
 	 * @return deleted flag
 	 */
 	boolean isDeleted();
+	
+	void setDeleted(boolean deleted);
 
 	/**
 	 * 
