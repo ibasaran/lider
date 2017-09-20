@@ -135,6 +135,13 @@ public class MailManagerNotifier implements EventHandler {
 
 			ScheduledFuture<?> futureTask= threadExecutorMain.scheduleAtFixedRate(mailScheduler, 0, period, type);
 			mailScheduler.setFutureTask(futureTask);
+
+			try {
+				command.setMailThreadingActive(true);
+				commandDao.update(command);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
