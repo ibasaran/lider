@@ -116,16 +116,18 @@ public class LDAPServiceImpl implements ILDAPService {
 		lconfig.setLdapPort(Integer.parseInt(configurationService.getLdapPort()));
 		lconfig.setName(configurationService.getLdapUsername());
 		lconfig.setCredentials(configurationService.getLdapPassword());
+		
+		
 		if (configurationService.getLdapUseSsl()) {
-			lconfig.setUseTls(true);
+			lconfig.setUseSsl(true);
 			if (configurationService.getLdapAllowSelfSignedCert()) {
 				lconfig.setKeyManagers(createCustomKeyManagers());
 				lconfig.setTrustManagers(createCustomTrustManager());
 			}
 		} else {
-			lconfig.setUseTls(false);
+			lconfig.setUseSsl(false);
 		}
-
+		
 		// Create connection pool
 		PoolableLdapConnectionFactory factory = new PoolableLdapConnectionFactory(lconfig);
 		pool = new LdapConnectionPool(factory);
@@ -133,6 +135,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		pool.setMaxActive(100);
 		pool.setMaxWait(3000);
 		pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
+
 
 		logger.debug(this.toString());
 	}
