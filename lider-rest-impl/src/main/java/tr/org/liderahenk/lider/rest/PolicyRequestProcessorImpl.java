@@ -408,18 +408,18 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 					continue;
 				}
 				// Filter by DN type (user, OU etc)
-				if (dnType != null && dnType != DNType.ALL) {
-					boolean result = true;
-					for (ICommandExecution exec : cmd.getCommandExecutions()) {
-						if (dnType != exec.getDnType()) {
-							result = false;
-							break;
-						}
-					}
-					if (!result) {
-						continue;
-					}
-				}
+//				if (dnType != null && dnType != DNType.ALL) {
+//					boolean result = true;
+//					for (ICommandExecution exec : cmd.getCommandExecutions()) {
+//						if (dnType != exec.getDnType()) {
+//							result = false;
+//							break;
+//						}
+//					}
+//					if (!result) {
+//						continue;
+//					}
+//				}
 				// Filter by dn
 				if (dn != null) {
 					boolean result = false;
