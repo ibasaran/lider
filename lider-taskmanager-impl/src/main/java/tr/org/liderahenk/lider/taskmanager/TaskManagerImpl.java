@@ -257,7 +257,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					}
 					logger.info("Sending task to agent with JID: {}", uid);
 					message = messageFactory.createExecuteTaskMessage(task, uid,
-							usesFileTransfer ? configurationService.getFileServerConf(uid) : null);
+							usesFileTransfer ? configurationService.getFileServerConf(uid.toLowerCase()) : null);
 					// Send message to agent. Responses will be handled by
 					// TaskStatusUpdateListener in XMPPClientImpl class
 					messagingService.sendMessage(message);
@@ -323,7 +323,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						// Agent must have sent a file before this message! Find
 						// the file by its MD5 digest.
 						String filePath = configurationService.getFileServerAgentFilePath().replaceFirst("\\{0\\}",
-								jid);
+								jid.toLowerCase());
 						if (!filePath.endsWith("/"))
 							filePath += "/";
 						filePath += message.getResponseData().get("md5").toString();
