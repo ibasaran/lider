@@ -234,6 +234,8 @@ public class AgentDaoImpl implements IAgentDao {
 	
 	@Override
 	public List<String> findOnlineUsers(String dn) {
+		
+		dn=dn.replace("+"," ");
 		Query query = entityManager.createQuery(FIND_ONLINE_USERS);
 		query.setParameter("dn", dn);
 		List<String> resultList = query.getResultList();
