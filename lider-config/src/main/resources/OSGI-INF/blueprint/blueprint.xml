@@ -86,6 +86,13 @@
 		<property name="fileServerAgreementPath" value="${file.server.agreement.path}" />
 		<property name="fileServerAgentFilePath" value="${file.server.agent.file.path}" />
 		<property name="fileServerUrl" value="${file.server.url}" />
+		
+		
+		<property name="cronTaskList" value="${cron.task.list}" />
+		<property name="entrySizeLimit" value="${entry.size.limit}" />
+		<property name="cronIntervalEntrySize" value="${cron.interval.entry.size}" />
+		
+		
 	</bean>
 
 </blueprint>

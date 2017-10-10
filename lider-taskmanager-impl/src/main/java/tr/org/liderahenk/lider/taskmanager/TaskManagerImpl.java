@@ -21,6 +21,7 @@ package tr.org.liderahenk.lider.taskmanager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -235,6 +236,22 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		// While persisting each command execution, send task message
 		// to agent, if necessary!
 		if (entries != null && !entries.isEmpty()) {
+			
+			boolean performanceSleepActive=false;
+			boolean cronManipulateActive=false;
+			 // +
+			
+			List<String> cronTaskList= getCronTaskList();
+			for (String cronTask : cronTaskList) {
+				if(cronTask.contains("ALL") || task.getCommandClsId().equals(cronTask)) 
+					cronManipulateActive=true;
+			}
+			
+			if( entries.size()>configurationService.getEntrySizeLimit())
+			{
+				performanceSleepActive=true;
+			}
+			
 			for (final LdapEntry entry : entries) {
 				boolean isAhenk = ldapService.isAhenk(entry);
 				String uid = isAhenk ? entry.get(configurationService.getAgentLdapJidAttribute()) : null;
@@ -244,7 +261,20 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid,
 						messagingService.isRecipientOnline(getFullJid(uid)));
 				command.addCommandExecution(execution);
+				
+				String cronStr= task.getCronExpression();
+				
+				if(cronManipulateActive && cronStr!=null && !cronStr.equals("") ){
+					
+					String[] cronStrArr= cronStr.split(" ");
+					
+//					String minute= cronStrArr[0];
+//					String hour=cronStrArr[1];
+//					String day=cronStrArr[2];
+//					String month=cronStrArr[3];
+//					String day_week=cronStrArr[4];
 
+				}
 				// Task message
 				ILiderMessage message = null;
 				if (isAhenk) {
@@ -261,8 +291,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					// Send message to agent. Responses will be handled by
 					// TaskStatusUpdateListener in XMPPClientImpl class
 					messagingService.sendMessage(message);
+					
+					if(performanceSleepActive){
+						
+						Thread.sleep(500);
+					}
 				}
-
 				commandDao.save(execution);
 			}
 		}
@@ -271,6 +305,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		ITaskNotification notification = messageFactory.createTaskNotification(command.getCommandOwnerUid(), command);
 		messagingService.sendNotification(notification);
 	}
+
 
 	/**
 	 * Triggered when a task status message received. This method listens to
@@ -552,6 +587,35 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 	public void setMailAddressDao(IMailAddressDao mailAddressDao) {
 		this.mailAddressDao = mailAddressDao;
+	}
+	
+	public List<String> getCronTaskList(){
+
+		if(configurationService.getCronTaskList()==null ) return null;
+		
+		if(configurationService.getCronTaskList()!=null
+				&& (configurationService.getCronTaskList().contains("ALL")|| configurationService.getCronTaskList().contains("all"))){
+			List<String> all=new ArrayList<>();
+			all.add("ALL");
+			
+			return all;
+		}
+		
+		
+		String[] strArr= configurationService.getCronTaskList().split(",");
+		
+		if(strArr.length>0) 
+		{
+			return Arrays.asList(strArr);
+		}
+		else{
+			
+			List<String> all=new ArrayList<>();
+			all.add(configurationService.getCronTaskList());
+			return all;
+		}  
+		
+	
 	}
 
 }
