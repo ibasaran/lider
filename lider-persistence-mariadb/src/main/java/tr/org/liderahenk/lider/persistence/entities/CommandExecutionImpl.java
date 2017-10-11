@@ -76,7 +76,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 	@Column(name = "DN_TYPE", length = 1)
 	private Integer dnType;
 
-	@Column(name = "DN")
+	@Column(name = "DN",columnDefinition = "TEXT", length = 1000)
 	private String dn;
 
 	@Temporal(TemporalType.TIMESTAMP)
