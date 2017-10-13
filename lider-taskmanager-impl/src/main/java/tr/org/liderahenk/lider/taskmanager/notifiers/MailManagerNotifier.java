@@ -177,25 +177,6 @@ public class MailManagerNotifier implements EventHandler {
 					cerList.add(commandExecutionResultList.get(0));
 				}
 			}
-			
-			StringBuilder cerListStr= new StringBuilder();
-			
-			for (ICommandExecution ce : ceList) {
-				
-				boolean isExist=false;
-				
-				for (ICommandExecutionResult cer : cerList) {
-					if(cer.getCommandExecution()!=null && cer.getCommandExecution().getId()==ce.getId()){
-						isExist=true;					
-					}
-				}
-				if(!isExist){
-					cerListStr.append(ce.getDn() + ", ");
-				}
-			}
-			
-			mailContentBuilder.append("Görev ulaşmayan istemciler: "+cerListStr.toString());
-			
 			StringBuilder mailContentBuilder = new StringBuilder();
 
 			mailContentBuilder.append(command.getTask().getPlugin().getDescription()).append(" eklentisi ")
@@ -205,7 +186,27 @@ public class MailManagerNotifier implements EventHandler {
 					.append(" adet istemci için çalıştırılmıştır. " + "\nGörev toplam " + cerList.size()
 							+ "adet istemciye ulaşmıştır. " + "\nGörev toplam " + (ceList.size() - cerList
 									.size())
-							+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
+							+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n");
+			
+			
+			StringBuilder cerListStr= new StringBuilder();
+			
+			
+			for (ICommandExecution ce : ceList) {
+				
+				boolean isExist=false;
+				
+				for (ICommandExecutionResult cer : cerList) {
+					if(cer.getCommandExecution().getId()==ce.getId()){
+						isExist=true;
+					}
+				}
+				if(!isExist){
+					cerListStr.append(ce.getDn() + ", ");
+				}
+			}
+			
+			mailContentBuilder.append("Görev ulaşmayan istemciler: "+cerListStr.toString());
 
 			mailContent = mailContentBuilder.toString() + mailContent;
 		}
@@ -370,21 +371,26 @@ public class MailManagerNotifier implements EventHandler {
 							+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
 
 			
+			
 			StringBuilder cerListStr= new StringBuilder();
+			
 			
 			for (ICommandExecution ce : ceList) {
 				
 				boolean isExist=false;
 				
 				for (ICommandExecutionResult cer : cerList) {
-					if(cer.getCommandExecution()!=null && cer.getCommandExecution().getId()==ce.getId()){
-						isExist=true;					
+					if(cer.getCommandExecution().getId()==ce.getId()){
+						isExist=true;
 					}
 				}
 				if(!isExist){
 					cerListStr.append(ce.getDn() + ", ");
 				}
 			}
+			
+			mailContent.append("Görev ulaşmayan istemciler: "+cerListStr.toString());
+			
 			
 			
 			for (ICommandExecution execution : command.getCommandExecutions()) {
@@ -436,3 +442,5 @@ public class MailManagerNotifier implements EventHandler {
 	}
 	
 }
+
+
