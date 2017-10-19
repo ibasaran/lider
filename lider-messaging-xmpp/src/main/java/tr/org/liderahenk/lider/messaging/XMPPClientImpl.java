@@ -404,12 +404,25 @@ public class XMPPClientImpl {
 	 * @throws NotConnectedException
 	 */
 	public void sendMessage(String message, String jid) throws NotConnectedException {
+		
+		try{
 		String jidFinal = getFullJid(jid);
 		logger.debug("Sending message: {} to user: {}", new Object[] { message, jidFinal });
 		Message msg = new Message(jidFinal, Message.Type.normal);
 		msg.setBody(message);
 		connection.sendStanza(msg);
-		logger.debug("Successfully sent message to user: {}", jidFinal);
+		logger.debug("Successfully sent message to user: {}", jidFinal);}
+		catch(NotConnectedException ex){
+			ex.printStackTrace();
+			
+			try {
+				logger.debug("Tring again to connect..");
+				init();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

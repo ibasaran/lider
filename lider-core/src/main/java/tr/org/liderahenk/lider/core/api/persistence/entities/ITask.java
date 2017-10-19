@@ -71,6 +71,7 @@ public interface ITask extends IEntity {
 	byte[] getParameterMapBlob();
 
 	Map<String, Object> getParameterMap();
+	void setParameterMap(Map<String, Object> paramaterMap);
 	
 	boolean isMailSend();
 	void setMailSend(boolean mailSend);

@@ -286,13 +286,29 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						continue;
 					}
 					logger.info("Sending task to agent with JID: {}", uid);
+					
+//					String dnCheck=(String) task.getParameterMap().get("dnCheck");
+//					
+//					if(dnCheck!=null){
+//					
+//						Object param=task.getParameterMap().get(entry.getDistinguishedName());
+//						
+//						Map<String,Object> prmMap=new HashMap<String,Object>(1);
+//						
+//						String uidAhenk =entry.getAttributes().get("uid");
+//						
+//						prmMap.put(uidAhenk, param);
+//						
+//						task.setParameterMap(prmMap);
+//					}
+					
 					message = messageFactory.createExecuteTaskMessage(task, uid,
 							usesFileTransfer ? configurationService.getFileServerConf(uid.toLowerCase()) : null);
 					// Send message to agent. Responses will be handled by
 					// TaskStatusUpdateListener in XMPPClientImpl class
 					messagingService.sendMessage(message);
 					
-					if(performanceSleepActive){
+					if(performanceSleepActive){  
 						
 						Thread.sleep(500);
 					}
@@ -352,7 +368,9 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					// because (unlike policies) tasks can only be executed for
 					// agents on agents!
 					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), jid);
-
+					
+					if(commandExecution==null) return;
+					
 					ICommandExecutionResult result = null;
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
 						// Agent must have sent a file before this message! Find

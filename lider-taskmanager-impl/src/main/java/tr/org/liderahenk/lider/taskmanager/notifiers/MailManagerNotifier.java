@@ -128,6 +128,7 @@ public class MailManagerNotifier implements EventHandler {
 		}
 
 		ICommand command = commanExecutionResult.getCommandExecution().getCommand();
+		command= commandDao.find(command.getId()); // find new execution result
 
 		if (!command.isMailThreadingActive()) {
 			
