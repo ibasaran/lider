@@ -358,6 +358,8 @@ public class MailManagerNotifier implements EventHandler {
 			ICommand command) {
 		// Build mail to_list
 		List<String> toList = getMailToList(command);
+		logger.info(" Mail Sending To :" + toList.toString());
+		
 		if (toList.size() > 0) {
 			String mailSubject = "";
 			StringBuilder mailContent = new StringBuilder();
@@ -386,7 +388,12 @@ public class MailManagerNotifier implements EventHandler {
 					}
 				}
 				if(!isExist){
-					cerListStr.append(ce.getDn() + ", ");
+					if(ce.getDn()!=null){
+						
+					String[] dnArr=ce.getDn().split(",");
+					cerListStr.append(dnArr[0] + ",");
+					
+					}
 				}
 			}
 			
@@ -394,9 +401,12 @@ public class MailManagerNotifier implements EventHandler {
 			
 			
 			
+			
 			for (ICommandExecution execution : command.getCommandExecutions()) {
 
-				for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
+				//for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
+				
+				ICommandExecutionResult result=execution.getCommandExecutionResults().get(0); // Getting last command execution result
 
 					if (mailSubject.isEmpty() && result.getMailSubject() != null
 							&& !result.getMailSubject().isEmpty()) {
@@ -412,7 +422,7 @@ public class MailManagerNotifier implements EventHandler {
 								.append(result.getMailContent());
 						break;
 					}
-				}
+				//}
 			}
 
 			// Send mail
