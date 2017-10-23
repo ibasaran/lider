@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -247,59 +244,63 @@ public class MailManagerNotifier implements EventHandler {
 		@Override
 		public void run() {
 			
-			logger.info("Mail Sending with mail scheduler");
-
-			commandScheduler = commandDao.find(commandScheduler.getId()); // find new execution result
-			
-			logger.info("Command id : " + commandScheduler.getId());
-
-			ITask task = commandScheduler.getTask();
-
-			List<? extends ICommandExecution> ceList = commandScheduler.getCommandExecutions();
-
-			List<ICommandExecutionResult> cerList = new ArrayList<ICommandExecutionResult>();
-
-			for (ICommandExecution iCommandExecution : ceList) {
-				List<? extends ICommandExecutionResult> commandExecutionResultList = iCommandExecution
-						.getCommandExecutionResults();
-				if (commandExecutionResultList != null && commandExecutionResultList.size() > 0) {
-					cerList.add(commandExecutionResultList.get(0));
-				}
-			}
-
-			// if(ceList.size() == cerList.size() ) {
-			// this.threadExecutor.shutdown();
-			// }
-
-			createAndSendMail(ceList, cerList, commandScheduler);
-
-			// flag to threading is starting
-			commandScheduler.setMailThreadingActive(true);
-
 			try {
-				commandDao.update(commandScheduler);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if (task.isDeleted()) {
+				logger.info("Mail Sending with mail scheduler");
+
+				commandScheduler = commandDao.find(commandScheduler.getId()); // find new execution result
 				
-				logger.info("Thread executor will shutdown because Task is deleted task id : " + task.getId());
-				if(futureTask!=null){
-					futureTask.cancel(true);
+				logger.info("Command id : " + commandScheduler.getId());
+
+				ITask task = commandScheduler.getTask();
+
+				List<? extends ICommandExecution> ceList = commandScheduler.getCommandExecutions();
+
+				List<ICommandExecutionResult> cerList = new ArrayList<ICommandExecutionResult>();
+
+				for (ICommandExecution iCommandExecution : ceList) {
+					List<? extends ICommandExecutionResult> commandExecutionResultList = iCommandExecution
+							.getCommandExecutionResults();
+					if (commandExecutionResultList != null && commandExecutionResultList.size() > 0) {
+						cerList.add(commandExecutionResultList.get(0));
+					}
+				}
+
+				// if(ceList.size() == cerList.size() ) {
+				// this.threadExecutor.shutdown();
+				// }
+
+				createAndSendMail(ceList, cerList, commandScheduler);
+
+				// flag to threading is starting
+				commandScheduler.setMailThreadingActive(true);
+
+				try {
+					commandDao.update(commandScheduler);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				
+				if (task.isDeleted()) {
+					
+					logger.info("Thread executor will shutdown because Task is deleted task id : " + task.getId());
+					if(futureTask!=null){
+						futureTask.cancel(true);
+					}
+					
 //				this.threadExecutor.shutdown();
 //				
 //				threadExecutorMain=null;
-			}
-
-			if (!task.isDeleted() && task.getCronExpression() == null && ceList.size() == cerList.size()) {
-				logger.info("Thread executor will shutdown because Task has not got cron expression and result is completed. Task id : " + task.getId());
-				
-				if(futureTask!=null){
-					futureTask.cancel(true);
 				}
+
+				if (!task.isDeleted() && task.getCronExpression() == null && ceList.size() == cerList.size()) {
+					logger.info("Thread executor will shutdown because Task has not got cron expression and result is completed. Task id : " + task.getId());
+					
+					if(futureTask!=null){
+						futureTask.cancel(true);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 		}
@@ -358,8 +359,7 @@ public class MailManagerNotifier implements EventHandler {
 			ICommand command) {
 		// Build mail to_list
 		List<String> toList = getMailToList(command);
-		logger.info(" Mail Sending To :" + toList.toString());
-		
+
 		if (toList.size() > 0) {
 			String mailSubject = "";
 			StringBuilder mailContent = new StringBuilder();
@@ -371,7 +371,7 @@ public class MailManagerNotifier implements EventHandler {
 					.append("Görev toplam ").append(ceList.size())
 					.append(" adet istemci için çalıştırılmıştır. " + "\nGörev toplam " + cerList.size()
 							+ "adet istemciye ulaşmıştır. " + "\nGörev toplam " + (ceList.size() - cerList.size())
-							+ " adet istemciye ulaşmamıştır.\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz: \n\n");
+							+ " adet istemciye ulaşmamıştır. \n") ;
 
 			
 			
@@ -397,37 +397,45 @@ public class MailManagerNotifier implements EventHandler {
 				}
 			}
 			
-			mailContent.append("Görev ulaşmayan istemciler: "+cerListStr.toString());
+			if(!cerList.toString().equals(""))
+			mailContent.append("Görev ulaşmayan istemciler: "+cerListStr.toString() +" \n");
 			
 			
+			mailContent.append("\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
 			
 			
 			for (ICommandExecution execution : command.getCommandExecutions()) {
+				
+				logger.info("------------>> Command Execution .. Execution ID : "+ execution.getId());
 
 				//for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
 				
+				if(execution.getCommandExecutionResults()!=null && execution.getCommandExecutionResults().size()>0){
+				
 				ICommandExecutionResult result=execution.getCommandExecutionResults().get(0); // Getting last command execution result
+				
+				logger.info("------------>> Command Execution Result .. Result ID : "+ result.getId() + " Mail Content : "+ result.getMailContent());
 
-					if (mailSubject.isEmpty() && result.getMailSubject() != null
+					if (result!=null && mailSubject.isEmpty() && result.getMailSubject() != null
 							&& !result.getMailSubject().isEmpty()) {
 
 						mailSubject = result.getMailSubject();
 					}
 
-					if (StatusCode.getTaskEndingStates().contains(result.getResponseCode())
+					if ( result!=null && StatusCode.getTaskEndingStates().contains(result.getResponseCode())
 							&& result.getMailContent() != null && !result.getMailContent().trim().isEmpty()) {
 						hasContent = true;
 						mailContent.append("\nAhenk: ").append(execution.getUid()).append(", Sonuç: ")
 								.append(localeService.getString(result.getResponseCode().toString())).append(", Mesaj:")
 								.append(result.getMailContent());
-						break;
+						
 					}
+				}
 				//}
 			}
 
 			// Send mail
 			if (hasContent) {
-				logger.debug("Sending mail notification.");
 				mailSubject = "Lider Ahenk Görev Sonucu " + mailSubject;
 				String body = mailContent.toString();
 				logger.debug("Task mail content: {}", body);

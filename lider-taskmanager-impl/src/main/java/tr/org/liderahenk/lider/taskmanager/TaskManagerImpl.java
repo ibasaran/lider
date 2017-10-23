@@ -166,7 +166,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					onlineEntries.add(ldapEntry);
 				else {
 					offlineEntries.add(ldapEntry);
-					offlineEntriesStr += ldapEntry.getDistinguishedName() + " ";
+					String[] dnArr=ldapEntry.getDistinguishedName().split(",");
+					offlineEntriesStr += dnArr[0] + " ";
 				}
 			}
 			String mailSubject = "Lider Ahenk Görevi";
