@@ -126,14 +126,18 @@ public class MailManagerNotifier implements EventHandler {
 
 		ICommand command = commanExecutionResult.getCommandExecution().getCommand();
 		command= commandDao.find(command.getId()); // find new execution result
+		
 
 		if (!command.isMailThreadingActive()) {
+			
+			System.out.println("Command Mail Threading activating.... Command id = " + command.getId() );
 			
 			MailScheduler mailScheduler=	new MailScheduler(command, threadExecutorMain);
 
 			ScheduledFuture<?> futureTask= threadExecutorMain.scheduleAtFixedRate(mailScheduler, 0, period, type);
 			mailScheduler.setFutureTask(futureTask);
-
+			
+			System.out.println("Thread Executor size"+ threadExecutorMain.getQueue().size());
 			try {
 				command.setMailThreadingActive(true);
 				commandDao.update(command);
@@ -404,18 +408,16 @@ public class MailManagerNotifier implements EventHandler {
 			mailContent.append("\nGörev sonuçlarına ilişkin detayları aşağıda inceleyebilirsiniz:");
 			
 			
+			System.out.println(" Command Execution Size : "+command.getCommandExecutions().size() );
+			
 			for (ICommandExecution execution : command.getCommandExecutions()) {
 				
-				logger.info("------------>> Command Execution .. Execution ID : "+ execution.getId());
-
 				//for (ICommandExecutionResult result : execution.getCommandExecutionResults()) {
 				
 				if(execution.getCommandExecutionResults()!=null && execution.getCommandExecutionResults().size()>0){
 				
 				ICommandExecutionResult result=execution.getCommandExecutionResults().get(0); // Getting last command execution result
 				
-				logger.info("------------>> Command Execution Result .. Result ID : "+ result.getId() + " Mail Content : "+ result.getMailContent());
-
 					if (result!=null && mailSubject.isEmpty() && result.getMailSubject() != null
 							&& !result.getMailSubject().isEmpty()) {
 
