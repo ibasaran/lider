@@ -137,7 +137,7 @@ public class MailManagerNotifier implements EventHandler {
 			ScheduledFuture<?> futureTask= threadExecutorMain.scheduleAtFixedRate(mailScheduler, 0, period, type);
 			mailScheduler.setFutureTask(futureTask);
 			
-			System.out.println("Thread Executor size"+ threadExecutorMain.getQueue().size());
+			System.out.println("Thread Executor Queque size = "+ threadExecutorMain.getQueue().size());
 			try {
 				command.setMailThreadingActive(true);
 				commandDao.update(command);
