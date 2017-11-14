@@ -19,7 +19,10 @@
 */
 package tr.org.liderahenk.lider.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -128,45 +131,21 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String fileServerAgentFilePath;
 	private String fileServerUrl;
 	private Integer fileServerPort;
+	
+	// cron manipluate for performance
+	private String cronTaskList;
+	private Integer entrySizeLimit;
+	private Integer cronIntervalEntrySize;
+	
+	
+	
+	
 
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
 	}
 
-	@Override
-	public String toString() {
-		return "ConfigurationServiceImpl [liderLocale=" + liderLocale + ", ldapServer=" + ldapServer + ", ldapPort="
-				+ ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn="
-				+ ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes
-				+ ", ldapAllowSelfSignedCert=" + ldapAllowSelfSignedCert + ", ldapMailNotifierAttributes="
-				+ ldapMailNotifierAttributes + ", ldapEmailAttribute=" + ldapEmailAttribute + ", xmppHost=" + xmppHost
-				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
-				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
-				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
-				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
-				+ ", xmppAllowSelfSignedCert=" + xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl
-				+ ", xmppPresencePriority=" + xmppPresencePriority + ", agentLdapBaseDn=" + agentLdapBaseDn
-				+ ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
-				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
-				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
-				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
-				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
-				+ groupLdapObjectClasses + ", taskManagerCheckFutureTask=" + taskManagerCheckFutureTask
-				+ ", taskManagerFutureTaskCheckPeriod=" + taskManagerFutureTaskCheckPeriod + ", alarmCheckReport="
-				+ alarmCheckReport + ", mailAddress=" + mailAddress + ", mailPassword=" + mailPassword + ", mailHost="
-				+ mailHost + ", mailSmtpPort=" + mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth
-				+ ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable + ", mailSmtpSslEnable=" + mailSmtpSslEnable
-				+ ", mailSmtpConnTimeout=" + mailSmtpConnTimeout + ", mailSmtpTimeout=" + mailSmtpTimeout
-				+ ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout + ", mailSendOnTaskCompletion="
-				+ mailSendOnTaskCompletion + ", mailCheckTaskCompletionPeriod=" + mailCheckTaskCompletionPeriod
-				+ ", mailSendOnPolicyCompletion=" + mailSendOnPolicyCompletion + ", mailCheckPolicyCompletionPeriod="
-				+ mailCheckPolicyCompletionPeriod + ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol="
-				+ fileServerProtocol + ", fileServerHost=" + fileServerHost + ", fileServerUsername="
-				+ fileServerUsername + ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath="
-				+ fileServerPluginPath + ", fileServerAgreementPath=" + fileServerAgreementPath
-				+ ", fileServerAgentFilePath=" + fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl
-				+ ", fileServerPort=" + fileServerPort + "]";
-	}
+
 
 	public String prettyPrintConfig() {
 		try {
@@ -794,6 +773,82 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setMailCheckPolicyCompletionPeriod(Long mailCheckPolicyCompletionPeriod) {
 		this.mailCheckPolicyCompletionPeriod = mailCheckPolicyCompletionPeriod;
+	}
+
+	@Override
+	public String getCronTaskList() {
+		return cronTaskList;
+	}
+
+	@Override
+	public Integer getEntrySizeLimit() {
+		return entrySizeLimit;
+	}
+
+	@Override
+	public Integer getCronIntervalEntrySize() {
+		
+		return cronIntervalEntrySize;
+	}
+
+	@Override
+	public String toString() {
+		return "ConfigurationServiceImpl [liderLocale=" + liderLocale + ", ldapServer=" + ldapServer + ", ldapPort="
+				+ ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn="
+				+ ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes
+				+ ", ldapAllowSelfSignedCert=" + ldapAllowSelfSignedCert + ", ldapMailNotifierAttributes="
+				+ ldapMailNotifierAttributes + ", ldapEmailAttribute=" + ldapEmailAttribute + ", xmppHost=" + xmppHost
+				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
+				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
+				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
+				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
+				+ ", xmppAllowSelfSignedCert=" + xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl
+				+ ", xmppPresencePriority=" + xmppPresencePriority + ", agentLdapBaseDn=" + agentLdapBaseDn
+				+ ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
+				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
+				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
+				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
+				+ groupLdapObjectClasses + ", taskManagerCheckFutureTask=" + taskManagerCheckFutureTask
+				+ ", taskManagerFutureTaskCheckPeriod=" + taskManagerFutureTaskCheckPeriod + ", alarmCheckReport="
+				+ alarmCheckReport + ", mailAddress=" + mailAddress + ", mailPassword=" + mailPassword + ", mailHost="
+				+ mailHost + ", mailSmtpPort=" + mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth
+				+ ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable + ", mailSmtpSslEnable=" + mailSmtpSslEnable
+				+ ", mailSmtpConnTimeout=" + mailSmtpConnTimeout + ", mailSmtpTimeout=" + mailSmtpTimeout
+				+ ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout + ", mailSendOnTaskCompletion="
+				+ mailSendOnTaskCompletion + ", mailCheckTaskCompletionPeriod=" + mailCheckTaskCompletionPeriod
+				+ ", mailSendOnPolicyCompletion=" + mailSendOnPolicyCompletion + ", mailCheckPolicyCompletionPeriod="
+				+ mailCheckPolicyCompletionPeriod + ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol="
+				+ fileServerProtocol + ", fileServerHost=" + fileServerHost + ", fileServerUsername="
+				+ fileServerUsername + ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath="
+				+ fileServerPluginPath + ", fileServerAgreementPath=" + fileServerAgreementPath
+				+ ", fileServerAgentFilePath=" + fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl
+				+ ", fileServerPort=" + fileServerPort + ", cronTaskList=" + cronTaskList + ", entrySizeLimit="
+				+ entrySizeLimit + ", cronIntervalEntrySize=" + cronIntervalEntrySize + "]";
+	}
+
+
+
+	public void setFileServerProtocol(Protocol fileServerProtocol) {
+		this.fileServerProtocol = fileServerProtocol;
+	}
+
+
+
+	public void setCronTaskList(String cronTaskList) {
+		this.cronTaskList = cronTaskList;
+	}
+
+
+
+	public void setEntrySizeLimit(Integer entrySizeLimit) {
+		this.entrySizeLimit = entrySizeLimit;
+	}
+
+
+
+	public void setCronIntervalEntrySize(Integer cronIntervalEntrySize) {
+		this.cronIntervalEntrySize = cronIntervalEntrySize;
 	}
 
 }

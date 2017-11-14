@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.core.api.configuration;
 
+import java.util.List;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
@@ -390,5 +391,13 @@ public interface IConfigurationService {
 	Boolean getMailSendOnPolicyCompletion();
 
 	Long getMailCheckPolicyCompletionPeriod();
+	
+	String getCronTaskList();
+	
+	Integer getEntrySizeLimit();
+	
+	Integer getCronIntervalEntrySize();
+	
+	
 
 }

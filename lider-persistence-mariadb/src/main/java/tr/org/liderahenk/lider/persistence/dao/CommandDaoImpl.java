@@ -214,7 +214,13 @@ public class CommandDaoImpl implements ICommandDao {
 		query.setParameter("uid", uid);
 		query.setParameter("taskId", taskId);
 		List<CommandExecutionImpl> resultList = query.setMaxResults(1).getResultList();
-		return resultList.get(0);
+		
+		CommandExecutionImpl commandExecutionImpl=null;
+		
+		if(resultList!=null && resultList.size()>0)
+		commandExecutionImpl= resultList.get(0);
+		
+		return commandExecutionImpl;
 	}
 
 	@Override
