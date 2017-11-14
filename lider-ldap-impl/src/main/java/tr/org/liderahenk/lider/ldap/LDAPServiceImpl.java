@@ -654,6 +654,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			req.setFilter(searchFilterStr);
 
 			req.setTimeLimit(0);
+			baseDn = baseDn.replace("+", " ");
 			req.setBase(new Dn(baseDn));
 
 			SearchCursor searchCursor = connection.search(req);

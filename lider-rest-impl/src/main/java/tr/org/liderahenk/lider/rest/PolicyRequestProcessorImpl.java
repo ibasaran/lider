@@ -395,6 +395,15 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 					e.printStackTrace();
 				}
 			}
+			
+			if(targetDnList != null){
+				for (int i = 0; i < targetDnList.size(); i++) {
+					String tdn = targetDnList.get(i);
+					tdn = tdn.replace("+", " ");
+					targetDnList.set(i, tdn);
+					
+				}
+			}
 
 			policies = new ArrayList<AppliedPolicy>();
 			for (Object[] arr : resultList) {
