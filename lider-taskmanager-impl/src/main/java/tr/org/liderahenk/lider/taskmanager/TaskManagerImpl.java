@@ -360,7 +360,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			// Find related agent
 			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", jid, 1);
-			if (agents != null) {
+			if (agents != null && agents.size()>0) {
 
 				IAgent agent = agents.get(0);
 				if (agent != null) {
