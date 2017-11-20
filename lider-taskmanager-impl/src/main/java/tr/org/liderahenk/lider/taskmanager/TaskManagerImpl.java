@@ -123,20 +123,21 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			ICommand command = entityFactory.createCommand(task, request, findCommandOwnerJid(), buildUidList(entries));
 			command = commandDao.save(command);
 
-			// Task has an activation date, it will be sent to agent(s) on that
-			// date.
+			// Task has an activation date, it will be sent to agent(s) on that date.
 			if (command.getActivationDate() != null) {
 				logger.info("Future task received. It will be executed on its activation date.");
 				return;
 			}
 
-			
-			if(task.getCronExpression()==null)
-			{
-				sendMail(request, plugin, task, entries);
-			}
-			else if(task.getCronExpression()!=null && !task.isMailSend()){
-				sendMail(request, plugin, task, entries);
+			Boolean mailSend = (Boolean) request.getParameterMap().get("mailSend");
+
+			if (mailSend != null && mailSend) {
+
+				if (task.getCronExpression() == null) {
+					sendMail(request, plugin, task, entries);
+				} else if (task.getCronExpression() != null && !task.isMailSend()) {
+					sendMail(request, plugin, task, entries);
+				}
 			}
 
 			// Otherwise handle task
@@ -152,56 +153,53 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	}
 
 	private void sendMail(final ITaskRequest request, final IPlugin plugin, ITask task, List<LdapEntry> entries) {
-		Boolean mailSend = (Boolean) request.getParameterMap().get("mailSend");
 
-		if (mailSend != null && mailSend) {
-
-			List<LdapEntry> onlineEntries = new ArrayList<LdapEntry>();
-			List<LdapEntry> offlineEntries = new ArrayList<LdapEntry>();
-			String offlineEntriesStr = "";
-			for (LdapEntry ldapEntry : entries) {
-				String uid = ldapEntry.get("uid");
-				ldapEntry.setOnline(messagingService.isRecipientOnline(getFullJid(uid)));
-				if (ldapEntry.isOnline())
-					onlineEntries.add(ldapEntry);
-				else {
-					offlineEntries.add(ldapEntry);
-					String[] dnArr=ldapEntry.getDistinguishedName().split(",");
-					offlineEntriesStr += dnArr[0] + " ";
-				}
+		List<LdapEntry> onlineEntries = new ArrayList<LdapEntry>();
+		List<LdapEntry> offlineEntries = new ArrayList<LdapEntry>();
+		String offlineEntriesStr = "";
+		for (LdapEntry ldapEntry : entries) {
+			String uid = ldapEntry.get("uid");
+			ldapEntry.setOnline(messagingService.isRecipientOnline(getFullJid(uid)));
+			if (ldapEntry.isOnline())
+				onlineEntries.add(ldapEntry);
+			else {
+				offlineEntries.add(ldapEntry);
+				String[] dnArr = ldapEntry.getDistinguishedName().split(",");
+				offlineEntriesStr += dnArr[0] + " ";
 			}
-			String mailSubject = "Lider Ahenk Görevi";
-			String mailContent = plugin.getDescription() + " eklentisi"
-					+ new SimpleDateFormat("dd-MM-yyyy H:m").format(new Date()) + " tarihinde " + request.getCommandId()
-					+ " görevi göndermiştir. \n";
-			mailContent += "Görev toplam " + onlineEntries.size() + " adet istemciye ulaşmıştır. \n";
-			
-			if(offlineEntries.size() >0) {
+		}
+		String mailSubject = "Lider Ahenk Görevi";
+		String mailContent = plugin.getDescription() + " eklentisi"
+				+ new SimpleDateFormat("dd-MM-yyyy H:m").format(new Date()) + " tarihinde " + request.getCommandId()
+				+ " görevi göndermiştir. \n";
+		mailContent += "Görev toplam " + onlineEntries.size() + " adet istemciye ulaşmıştır. \n";
+
+		if (offlineEntries.size() > 0) {
 			mailContent += "Görev toplam " + offlineEntries.size() + " adet istemciye ulaşmamıştır. \n";
 			mailContent += "Görev ulaşmayan istemciler : " + offlineEntriesStr;
+		}
+		if (mailSubject != null && mailContent != null) {
+
+			List<? extends IMailAddress> mailAddressList = getMailAddressDao().findByProperty(IMailAddress.class,
+					"plugin.id", task.getPlugin().getId(), 0);
+
+			List<String> toList = new ArrayList<String>();
+			for (IMailAddress iMailAddress : mailAddressList) {
+				toList.add(iMailAddress.getMailAddress());
 			}
-			if (mailSubject != null && mailContent != null) {
+			if (toList.size() > 0) {
+				getMailService().sendMail(toList, mailSubject, mailContent);
 
-				List<? extends IMailAddress> mailAddressList = getMailAddressDao().findByProperty(IMailAddress.class,
-						"plugin.id", task.getPlugin().getId(), 0);
-
-				List<String> toList = new ArrayList<String>();
-				for (IMailAddress iMailAddress : mailAddressList) {
-					toList.add(iMailAddress.getMailAddress());
-				}
-				if (toList.size() > 0){
-					getMailService().sendMail(toList, mailSubject, mailContent);
-				
-					try {
-						task.setMailSend(true);
-						taskDao.update(task);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					task.setMailSend(true);
+					taskDao.update(task);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
+
 	}
 
 	public String getFullJid(String jid) {
@@ -237,22 +235,21 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		// While persisting each command execution, send task message
 		// to agent, if necessary!
 		if (entries != null && !entries.isEmpty()) {
-			
-			boolean performanceSleepActive=false;
-			boolean cronManipulateActive=false;
-			 // +
-			
-			List<String> cronTaskList= getCronTaskList();
+
+			boolean performanceSleepActive = false;
+			boolean cronManipulateActive = false;
+			// +
+
+			List<String> cronTaskList = getCronTaskList();
 			for (String cronTask : cronTaskList) {
-				if(cronTask.contains("ALL") || task.getCommandClsId().equals(cronTask)) 
-					cronManipulateActive=true;
+				if (cronTask.contains("ALL") || task.getCommandClsId().equals(cronTask))
+					cronManipulateActive = true;
 			}
-			
-			if( entries.size()>configurationService.getEntrySizeLimit())
-			{
-				performanceSleepActive=true;
+
+			if (entries.size() > configurationService.getEntrySizeLimit()) {
+				performanceSleepActive = true;
 			}
-			
+
 			for (final LdapEntry entry : entries) {
 				boolean isAhenk = ldapService.isAhenk(entry);
 				String uid = isAhenk ? entry.get(configurationService.getAgentLdapJidAttribute()) : null;
@@ -262,18 +259,18 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid,
 						messagingService.isRecipientOnline(getFullJid(uid)));
 				command.addCommandExecution(execution);
-				
-				String cronStr= task.getCronExpression();
-				
-				if(cronManipulateActive && cronStr!=null && !cronStr.equals("") ){
-					
-					String[] cronStrArr= cronStr.split(" ");
-					
-//					String minute= cronStrArr[0];
-//					String hour=cronStrArr[1];
-//					String day=cronStrArr[2];
-//					String month=cronStrArr[3];
-//					String day_week=cronStrArr[4];
+
+				String cronStr = task.getCronExpression();
+
+				if (cronManipulateActive && cronStr != null && !cronStr.equals("")) {
+
+					String[] cronStrArr = cronStr.split(" ");
+
+					// String minute= cronStrArr[0];
+					// String hour=cronStrArr[1];
+					// String day=cronStrArr[2];
+					// String month=cronStrArr[3];
+					// String day_week=cronStrArr[4];
 
 				}
 				// Task message
@@ -287,30 +284,32 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						continue;
 					}
 					logger.info("Sending task to agent with JID: {}", uid);
-					
-//					String dnCheck=(String) task.getParameterMap().get("dnCheck");
-//					
-//					if(dnCheck!=null){
-//					
-//						Object param=task.getParameterMap().get(entry.getDistinguishedName());
-//						
-//						Map<String,Object> prmMap=new HashMap<String,Object>(1);
-//						
-//						String uidAhenk =entry.getAttributes().get("uid");
-//						
-//						prmMap.put(uidAhenk, param);
-//						
-//						task.setParameterMap(prmMap);
-//					}
-					
+
+					// String dnCheck=(String)
+					// task.getParameterMap().get("dnCheck");
+					//
+					// if(dnCheck!=null){
+					//
+					// Object
+					// param=task.getParameterMap().get(entry.getDistinguishedName());
+					//
+					// Map<String,Object> prmMap=new HashMap<String,Object>(1);
+					//
+					// String uidAhenk =entry.getAttributes().get("uid");
+					//
+					// prmMap.put(uidAhenk, param);
+					//
+					// task.setParameterMap(prmMap);
+					// }
+
 					message = messageFactory.createExecuteTaskMessage(task, uid,
 							usesFileTransfer ? configurationService.getFileServerConf(uid.toLowerCase()) : null);
 					// Send message to agent. Responses will be handled by
 					// TaskStatusUpdateListener in XMPPClientImpl class
 					messagingService.sendMessage(message);
-					
-					if(performanceSleepActive){  
-						
+
+					if (performanceSleepActive) {
+
 						Thread.sleep(500);
 					}
 				}
@@ -322,7 +321,6 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		ITaskNotification notification = messageFactory.createTaskNotification(command.getCommandOwnerUid(), command);
 		messagingService.sendNotification(notification);
 	}
-
 
 	/**
 	 * Triggered when a task status message received. This method listens to
@@ -346,13 +344,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			String mailContent = null;
 
 			try {
-				if(message.getResponseData()!=null && message.getResponseData().get("mail_send")!=null)
-				{
-				Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
-				mailSubject = (String) (mailSend != null && mailSend.booleanValue()
-						? message.getResponseData().get("mail_subject") : null);
-				mailContent = (String) (mailSend != null && mailSend.booleanValue()
-						? message.getResponseData().get("mail_content") : null);
+				if (message.getResponseData() != null && message.getResponseData().get("mail_send") != null) {
+					Boolean mailSend = (Boolean) message.getResponseData().get("mail_send");
+					mailSubject = (String) (mailSend != null && mailSend.booleanValue()
+							? message.getResponseData().get("mail_subject") : null);
+					mailContent = (String) (mailSend != null && mailSend.booleanValue()
+							? message.getResponseData().get("mail_content") : null);
 				}
 			} catch (Exception e1) {
 				logger.error(e1.getMessage(), e1);
@@ -360,7 +357,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			// Find related agent
 			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", jid, 1);
-			if (agents != null && agents.size()>0) {
+			if (agents != null && agents.size() > 0) {
 
 				IAgent agent = agents.get(0);
 				if (agent != null) {
@@ -369,9 +366,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					// because (unlike policies) tasks can only be executed for
 					// agents on agents!
 					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), jid);
-					
-					if(commandExecution==null) return;
-					
+
+					if (commandExecution == null)
+						return;
+
 					ICommandExecutionResult result = null;
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
 						// Agent must have sent a file before this message! Find
@@ -607,34 +605,31 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	public void setMailAddressDao(IMailAddressDao mailAddressDao) {
 		this.mailAddressDao = mailAddressDao;
 	}
-	
-	public List<String> getCronTaskList(){
 
-		if(configurationService.getCronTaskList()==null ) return null;
-		
-		if(configurationService.getCronTaskList()!=null
-				&& (configurationService.getCronTaskList().contains("ALL")|| configurationService.getCronTaskList().contains("all"))){
-			List<String> all=new ArrayList<>();
+	public List<String> getCronTaskList() {
+
+		if (configurationService.getCronTaskList() == null)
+			return null;
+
+		if (configurationService.getCronTaskList() != null && (configurationService.getCronTaskList().contains("ALL")
+				|| configurationService.getCronTaskList().contains("all"))) {
+			List<String> all = new ArrayList<>();
 			all.add("ALL");
-			
+
 			return all;
 		}
-		
-		
-		String[] strArr= configurationService.getCronTaskList().split(",");
-		
-		if(strArr.length>0) 
-		{
+
+		String[] strArr = configurationService.getCronTaskList().split(",");
+
+		if (strArr.length > 0) {
 			return Arrays.asList(strArr);
-		}
-		else{
-			
-			List<String> all=new ArrayList<>();
+		} else {
+
+			List<String> all = new ArrayList<>();
 			all.add(configurationService.getCronTaskList());
 			return all;
-		}  
-		
-	
+		}
+
 	}
 
 }
