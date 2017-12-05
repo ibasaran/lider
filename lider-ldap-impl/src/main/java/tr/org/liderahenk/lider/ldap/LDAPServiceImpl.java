@@ -463,6 +463,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		}
 	}
 
+
 	@Override
 	public void updateEntryRemoveAttribute(String entryDn, String attribute) throws LdapException {
 
@@ -474,12 +475,16 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
+				boolean isAttributeExist=false;
+				
 				for (Attribute a : entry.getAttributes()) {
-					if (a.getAttributeType().getName().equalsIgnoreCase(attribute)) {
+					if (a.getId().contains(attribute) || ( a.getAttributeType()!=null && a.getAttributeType().getName().equalsIgnoreCase(attribute))) {
+						isAttributeExist=true;
 						entry.remove(a);
 					}
 				}
 
+				if(isAttributeExist)
 				connection.modify(entry, ModificationOperation.REMOVE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
@@ -502,13 +507,20 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
+//
+//				for (Attribute a : entry.getAttributes()) {
+//					if (a.contains(value)) {
+//						a.remove(value);
+//					}
+//				}
 
-				for (Attribute a : entry.getAttributes()) {
-					if (a.contains(value)) {
-						a.remove(value);
-					}
+				
+				if (entry.get(attribute) != null) {
+					Value<?> oldValue = entry.get(attribute).get();
+					entry.remove(attribute, oldValue);
 				}
-
+				entry.add(attribute, value);
+				
 				connection.modify(entry, ModificationOperation.REPLACE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
