@@ -54,7 +54,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
  */
 @JsonIgnoreProperties({ "command" })
 @Entity
-@Table(name = "C_COMMAND_EXECUTION", uniqueConstraints = @UniqueConstraint(columnNames = { "COMMAND_ID", "DN_TYPE" }))
+@Table(name = "C_COMMAND_EXECUTION")
 public class CommandExecutionImpl implements ICommandExecution {
 
 	private static final long serialVersionUID = 298103880409529933L;
