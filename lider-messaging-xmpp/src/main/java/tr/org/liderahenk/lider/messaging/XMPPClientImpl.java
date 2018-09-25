@@ -407,11 +407,11 @@ public class XMPPClientImpl {
 		
 		try{
 		String jidFinal = getFullJid(jid);
-		logger.debug("Sending message: {} to user: {}", new Object[] { message, jidFinal });
+		logger.info("Sending message: {} to user: {}", new Object[] { message, jidFinal });
 		Message msg = new Message(jidFinal, Message.Type.normal);
 		msg.setBody(message);
 		connection.sendStanza(msg);
-		logger.debug("Successfully sent message to user: {}", jidFinal);}
+		logger.info("Successfully sent message to user: {}", jidFinal);}
 		catch(NotConnectedException ex){
 			ex.printStackTrace();
 			
