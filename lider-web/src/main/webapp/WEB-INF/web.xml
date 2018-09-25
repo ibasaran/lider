@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
-	version="2.5">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	      http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	      version="2.5">
 
 	<display-name>Spring MVC In ServiceMix</display-name>
 	<context-param>
@@ -13,13 +15,22 @@
 		<param-value>org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext
 		</param-value>
 	</context-param>
+	
+	<session-config>
+    	<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<mime-mapping>
+    	<extension>jnlp</extension>
+    	<mime-type>application/x-java-jnlp-file</mime-type>
+  	</mime-mapping>
 
 	<listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
 		</listener-class>
 	</listener>
-
+	
 	<servlet>
 		<servlet-name>spring-mvc</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet
@@ -45,7 +56,10 @@
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<filter>
+	
+	<!-- -->
+	
+	 <filter>
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>
 			org.springframework.web.filter.DelegatingFilterProxy
@@ -57,7 +71,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+		<url-pattern>/lider/*</url-pattern>
+	</filter-mapping> 
+	
 
 </web-app>
