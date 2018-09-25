@@ -132,4 +132,10 @@ public class ServiceRegistryImpl implements IServiceRegistry {
 		return templates != null ? templates.keySet() : null;
 	}
 
+	@Override
+	public HashMap<String, ICommand> getCommands() {
+		
+		return commands;
+	}
+
 }
