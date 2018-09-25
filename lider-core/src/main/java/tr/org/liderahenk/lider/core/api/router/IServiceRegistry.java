@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.core.api.router;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
@@ -59,5 +60,13 @@ public interface IServiceRegistry {
 	 * @return
 	 */
 	Set<String> getReportCodes();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	HashMap<String, ICommand> getCommands();
+	
+	
 
 }

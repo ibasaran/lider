@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.ldap.Rdn;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
@@ -47,6 +48,7 @@ import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.ModificationOperation;
 import org.apache.directory.api.ldap.model.entry.Value;
+import org.apache.directory.api.ldap.model.exception.LdapInvalidDnException;
 import org.apache.directory.api.ldap.model.message.AddRequest;
 import org.apache.directory.api.ldap.model.message.AddRequestImpl;
 import org.apache.directory.api.ldap.model.message.AddResponse;
@@ -428,7 +430,50 @@ public class LDAPServiceImpl implements ILDAPService {
 				}
 				entry.add(attribute, value);
 				connection.modify(entry, ModificationOperation.REPLACE_ATTRIBUTE);
+				
 			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new LdapException(e);
+		} finally {
+			releaseConnection(connection);
+		}
+	}
+	
+	
+	@Override
+	public void renameEntry(String oldName, String newName) throws LdapException {
+		logger.info("Rename DN  Old Name :" + oldName + " New Name " + newName);
+		LdapConnection connection = null;
+		
+		connection = getConnection();
+		
+		Entry entry = null;
+		try {
+			entry = connection.lookup(oldName);
+			
+			org.apache.directory.api.ldap.model.name.Rdn rdn= new org.apache.directory.api.ldap.model.name.Rdn(newName);
+		
+			connection.rename(entry.getDn(), rdn, true);
+				
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new LdapException(e);
+		} finally {
+			releaseConnection(connection);
+		}
+	}
+	@Override
+	public void moveEntry(String entryDn, String newSuperiorDn) throws LdapException {
+		logger.info("Moving entryDn :" + entryDn + "  newSuperiorDn " + newSuperiorDn);
+		LdapConnection connection = null;
+		
+		connection = getConnection();
+		
+		try {
+			
+			connection.move(entryDn,newSuperiorDn);
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new LdapException(e);
@@ -713,6 +758,140 @@ public class LDAPServiceImpl implements ILDAPService {
 		filterAttributes.add(new LdapSearchFilterAttribute(attributeName, attributeValue, SearchFilterEnum.EQ));
 		return search(configurationService.getLdapRootDn(), filterAttributes, returningAttributes);
 	}
+	
+	
+	@Override
+	public List<LdapEntry> findSubEntries(String dn, String filter, String[] returningAttributes,SearchScope scope) throws LdapException {
+		List<LdapEntry> result = new ArrayList<LdapEntry>();
+		LdapConnection connection = null;
+		
+		Map<String, String> attrs = null;
+		
+		connection = getConnection();
+		try {
+			connection = getConnection();
+			
+			SearchRequest request= new SearchRequestImpl();
+			
+			dn = dn.replace("+", " ");
+			request.setBase(new Dn(dn));
+			request.setScope(scope);
+			request.setFilter(filter);  //"(objectclass=*)"
+			
+			for (String attr : returningAttributes) {
+				
+				request.addAttributes(attr);
+				
+			}
+			
+		//	request.addAttributes("*");
+			request.addAttributes("+");
+
+			SearchCursor searchCursor = connection.search(request);
+			
+			while (searchCursor.next()) {
+				Response response = searchCursor.get();
+				attrs = new HashMap<String, String>();
+				if (response instanceof SearchResultEntry) {
+					
+					Entry entry = ((SearchResultEntry) response).getEntry();
+					
+//					if (returningAttributes != null) {
+//						for (String attr : returningAttributes) {
+//							attrs.put(attr, entry.get(attr) != null ? entry.get(attr).getString() : "");
+//						}
+//					}
+					
+					for (Iterator iterator = entry.getAttributes().iterator(); iterator.hasNext();) {
+						Attribute attr = (Attribute) iterator.next();
+						String attrName= attr.getUpId();
+						String value=attr.get().getString();
+						
+						attrs.put(attrName, value);
+						
+					}
+					
+					LdapEntry ldapEntry= new LdapEntry(entry.getDn().toString(), attrs, convertObjectClass2DNType(entry.get("objectClass")));
+					
+					//ldapEntry.setParent(dn);
+					
+					ldapEntry.setEntryUUID(ldapEntry.getAttributes().get("entryUUID"));
+					ldapEntry.setHasSubordinates(ldapEntry.getAttributes().get("hasSubordinates"));
+					
+					ldapEntry.setOu(ldapEntry.getAttributes().get("ou"));
+					ldapEntry.setCn(ldapEntry.getAttributes().get("cn"));
+					ldapEntry.setSn(ldapEntry.getAttributes().get("sn"));
+					ldapEntry.setUid(ldapEntry.getAttributes().get("uid"));
+					ldapEntry.setO(ldapEntry.getAttributes().get("o"));
+					ldapEntry.setUserPassword(ldapEntry.getAttributes().get("userPassword"));
+					
+					ldapEntry.setName( (ldapEntry.getAttributes().get("ou")!=null &&  !ldapEntry.getAttributes().get("ou").equals("")) 
+							? ldapEntry.getAttributes().get("ou") : ldapEntry.getAttributes().get("cn")!=null &&  !ldapEntry.getAttributes().get("cn").equals("") 
+							? ldapEntry.getAttributes().get("cn") : ldapEntry.getAttributes().get("o") );
+					
+					result.add(ldapEntry);
+//					if("TRUE".equals(ldapEntry.getHasSubordinates())){
+//						List<LdapEntry> entries=findSubEntries(ldapEntry.getDistinguishedName(),"(objectclass=organizationalUnit)",
+//								new String[]{"cn","entryUUID","hasSubordinates"}, SearchScope.ONELEVEL);
+//						
+//					}
+					
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new LdapException(e);
+		} finally {
+			releaseConnection(connection);
+		}
+
+		return result;
+	}
+	
+	
+	
+	public LdapEntry getLdapTree(LdapEntry ldapEntry)  {
+		
+		if(ldapEntry.getChildEntries()!=null){
+			return ldapEntry;
+		}
+		else{
+			try {
+				List<LdapEntry> entries=findSubEntries(ldapEntry.getDistinguishedName(),"(objectclass=organizationalUnit)",
+						new String[]{"*"}, SearchScope.ONELEVEL);
+				
+				ldapEntry.setChildEntries(entries);
+				for (LdapEntry ldapEntry2 : entries) {
+					ldapEntry2.setParent(ldapEntry.getEntryUUID());
+					getLdapTree(ldapEntry2);
+				}
+
+				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		return null;
+		
+	}
+	
+	
+	
+	@Override
+	public LdapEntry getDomainEntry() throws LdapException {
+		
+		LdapEntry domainEntry= null;
+			
+		List<LdapEntry> entries = findSubEntries(configurationService.getLdapRootDn(), "(objectclass=*)", new String[]{"*"}, SearchScope.OBJECT);
+			
+		if(entries.size()>0) domainEntry=entries.get(0);
+
+		return domainEntry;
+	}
+	
 
 	@Override
 	public boolean isAhenk(LdapEntry entry) {
@@ -834,6 +1013,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * @return
 	 */
 	private DNType convertObjectClass2DNType(Attribute objectClass) {
+		if(objectClass== null) return null;
 		// Check if agent
 		String agentObjectClasses = configurationService.getAgentLdapObjectClasses();
 		boolean isAgent = objectClass.contains(agentObjectClasses.split(","));
@@ -851,6 +1031,10 @@ public class LDAPServiceImpl implements ILDAPService {
 		boolean isGroup = objectClass.contains(groupObjectClasses.split(","));
 		if (isGroup) {
 			return DNType.GROUP;
+		}
+		boolean isOrganizationalGroup = objectClass.contains("organizationalUnit");
+		if (isOrganizationalGroup) {
+			return DNType.ORGANIZATIONAL_UNIT;
 		}
 		return null;
 	}

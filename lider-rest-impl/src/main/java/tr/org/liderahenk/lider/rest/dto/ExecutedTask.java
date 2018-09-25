@@ -49,6 +49,8 @@ public class ExecutedTask implements Serializable {
 	private Date createDate;
 
 	private Integer successResults;
+	
+	private Long executions;
 
 	private Integer warningResults;
 
@@ -60,11 +62,12 @@ public class ExecutedTask implements Serializable {
 
 	private Date lastExecutionDate;
 
-	public ExecutedTask(ITask task, Integer successResults, Integer warningResults, Integer errorResults, Date lastExecutionDate) {
+	public ExecutedTask(ITask task, Long executions , Integer successResults, Integer warningResults, Integer errorResults, Date lastExecutionDate) {
 		super();
 		this.id = task.getId();
 		this.pluginName = task.getPlugin().getName();
 		this.pluginVersion = task.getPlugin().getVersion();
+		this.executions=executions;
 		this.commandClsId = task.getCommandClsId();
 		this.createDate = task.getCreateDate();
 		this.successResults = successResults;
@@ -161,6 +164,14 @@ public class ExecutedTask implements Serializable {
 
 	public void setLastExecutionDate(Date lastExecutionDate) {
 		this.lastExecutionDate = lastExecutionDate;
+	}
+
+	public Long getExecutions() {
+		return executions;
+	}
+
+	public void setExecutions(Long executions) {
+		this.executions = executions;
 	}
 
 }

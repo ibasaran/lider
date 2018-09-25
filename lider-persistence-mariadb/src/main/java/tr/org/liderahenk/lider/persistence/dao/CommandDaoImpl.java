@@ -238,6 +238,7 @@ public class CommandDaoImpl implements ICommandDao {
 	}
 
 	private static final String FIND_TASK_COMMAND_WITH_DETAILS = "SELECT t, "
+			+ "COUNT(ce.id) as executions ,  "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_warning then 1 ELSE 0 END) as warning, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error, "
