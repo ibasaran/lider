@@ -71,6 +71,8 @@ public interface IAgent extends IEntity {
 	 * @return
 	 */
 	String getDn();
+	
+	void setDn(String dn);
 
 	/**
 	 * 

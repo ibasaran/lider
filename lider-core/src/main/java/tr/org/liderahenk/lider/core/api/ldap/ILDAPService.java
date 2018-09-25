@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.ldap.client.api.LdapConnection;
 
 import tr.org.liderahenk.lider.core.api.ldap.exceptions.LdapException;
@@ -72,10 +73,20 @@ public interface ILDAPService {
 	List<LdapEntry> search(String attributeName, String attributeValue, String[] returningAttributes)
 			throws LdapException;
 
+	
+	List<LdapEntry> findSubEntries(String dn, String filter, String[] returningAttributes, SearchScope scope) throws LdapException;
+	
+	LdapEntry getLdapTree(LdapEntry ldapEntry);
+	
 	boolean isAhenk(LdapEntry entry);
 
 	boolean isUser(LdapEntry entry);
 
 	List<LdapEntry> findTargetEntries(List<String> dnList, DNType dnType);
+	LdapEntry getDomainEntry() throws LdapException;
+
+	void renameEntry(String oldName, String newName) throws LdapException;
+
+	void moveEntry(String entryDn, String newSuperiorDn) throws LdapException;
 
 }
