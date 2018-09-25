@@ -52,6 +52,7 @@
 		<bundle start-level="85">mvn:${groupId}/lider-mail-notification/${project.version}</bundle>
 		<bundle start-level="86">mvn:${groupId}/lider-report-impl/${project.version}</bundle>
 		<bundle start-level="86">mvn:${groupId}/lider-deployer/${project.version}</bundle>
+		
 	</feature>
 
 	<feature name="lider-plugin-bundles" description="${project.name}"
@@ -207,9 +208,10 @@
 		</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-restore-db/1.0.0
 		</bundle>
-
-
-
+		
+		<configfile finalname="/etc/tr.org.liderahenk.ldap.cfg" override="true">mvn:tr.org.liderahenk/lider-ldap/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:tr.org.liderahenk/lider-ldap/1.0.0</bundle>
+        <bundle start-level="90">mvn:tr.org.liderahenk/lider-ldap-db/1.0.0</bundle>
 
 	</feature>
 
