@@ -48,6 +48,14 @@ public class RegistrationResponseMessageImpl implements IRegistrationResponseMes
 	private String message;
 
 	private String agentDn;
+	
+	private String ldapUserDn;
+	
+	private String ldapServer;
+
+	private String ldapBaseDn;
+	
+	private String ldapVersion;
 
 	private Date timestamp;
 
@@ -112,6 +120,41 @@ public class RegistrationResponseMessageImpl implements IRegistrationResponseMes
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	@Override
+	public String getLdapServer() {
+		return ldapServer;
+	}
+
+	public void setLdapServer(String ldapServer) {
+		this.ldapServer = ldapServer;
+	}
+
+	@Override
+	public String getLdapBaseDn() {
+		return ldapBaseDn;
+	}
+
+	public void setLdapBaseDn(String ldapBaseDn) {
+		this.ldapBaseDn = ldapBaseDn;
+	}
+
+	@Override
+	public String getLdapVersion() {
+		return ldapVersion;
+	}
+
+	public void setLdapVersion(String ldapVersion) {
+		this.ldapVersion = ldapVersion;
+	}
+
+	public String getLdapUserDn() {
+		return ldapUserDn;
+	}
+
+	public void setLdapUserDn(String ldapUserDn) {
+		this.ldapUserDn = ldapUserDn;
 	}
 
 }

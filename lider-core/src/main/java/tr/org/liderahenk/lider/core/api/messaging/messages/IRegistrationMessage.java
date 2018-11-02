@@ -48,6 +48,10 @@ public interface IRegistrationMessage extends IAgentMessage {
 	 * @return commad seperated MAC addresses.
 	 */
 	String getMacAddresses();
+	
+	String getUserName();
+	
+	String getUserPassword();
 
 	/**
 	 * 

@@ -19,6 +19,7 @@
 */
 package tr.org.liderahenk.lider.messaging.subscribers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
+import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
@@ -122,7 +125,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 			if (agent != null) {
 				alreadyExists = true;
 				// Update the record
-				agent = entityFactory.createAgent(agent, message.getPassword(), message.getHostname(),
+				agent = entityFactory.createAgent(agent,null, message.getPassword(), message.getHostname(),
 						message.getIpAddresses(), message.getMacAddresses(), message.getData());
 				agentDao.update(agent);
 			} else {
@@ -145,13 +148,19 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 						dn + " and its related database record created successfully!", dn, null, new Date());
 			}
 		} else if (AgentMessageType.UNREGISTER == message.getType()) {
+			
+			logger.info("Unregister message from jid : "+jid);
+			logger.info("Unregister message UserName: "+message.getUserName());
+			
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), jid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
 
+			String dn=null;
 			// Delete agent LDAP entry
 			if (entry != null && !entry.isEmpty()) {
-				ldapService.deleteEntry(entry.get(0).getDistinguishedName());
+				dn = entry.get(0).getDistinguishedName();
+				ldapService.deleteEntry(dn);
 			}
 
 			// Find related agent database record.
@@ -163,7 +172,8 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				agentDao.delete(agent.getId());
 			}
 
-			return null;
+			return new RegistrationResponseMessageImpl(StatusCode.UNREGISTERED,
+					dn + " and its related database record unregistered successfully!", dn, null, new Date());
 		} else if (AgentMessageType.REGISTER_LDAP == message.getType()) {
 			logger.info("REGISTER_LDAP");
 			return null;

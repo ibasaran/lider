@@ -47,5 +47,21 @@ public interface IRegistrationResponseMessage extends ILiderMessage {
 	 * @return LDAP DN assigned to agent during registration
 	 */
 	String getAgentDn();
+	
+	String getLdapServer();
+	
+	String getLdapBaseDn();
+	
+	String getLdapVersion();
+	
+	void setLdapServer(String ldapServer);
+
+	void setLdapBaseDn(String ldapBaseDn);
+
+	void setLdapVersion(String ldapVersion) ;
+	
+	String getLdapUserDn();
+
+	void setLdapUserDn(String ldapUserDn);
 
 }
