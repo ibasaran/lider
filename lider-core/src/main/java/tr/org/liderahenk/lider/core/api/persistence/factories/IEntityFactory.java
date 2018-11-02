@@ -280,7 +280,7 @@ public interface IEntityFactory {
 	 * @param data
 	 * @return
 	 */
-	IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses, String macAddresses,
+	IAgent createAgent(IAgent existingAgent,String dn, String password, String hostname, String ipAddresses, String macAddresses,
 			Map<String, Object> data);
 
 	IPluginPart createPluginPart(Long id, String fileName, String type, String fullPath);

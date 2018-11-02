@@ -254,6 +254,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				boolean isAhenk = ldapService.isAhenk(entry);
 				String uid = isAhenk ? entry.get(configurationService.getAgentLdapJidAttribute()) : null;
 				logger.info("DN type: {}, UID: {}", entry.getType().toString(), uid);
+				
+				uid=uid.trim();
 
 				// New command execution
 				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid,

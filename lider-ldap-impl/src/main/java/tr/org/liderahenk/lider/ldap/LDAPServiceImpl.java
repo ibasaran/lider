@@ -552,19 +552,19 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
-//
-//				for (Attribute a : entry.getAttributes()) {
-//					if (a.contains(value)) {
-//						a.remove(value);
-//					}
-//				}
+
+				for (Attribute a : entry.getAttributes()) {
+					if (a.contains(value)) {
+						a.remove(value);
+					}
+				}
 
 				
-				if (entry.get(attribute) != null) {
-					Value<?> oldValue = entry.get(attribute).get();
-					entry.remove(attribute, oldValue);
-				}
-				entry.add(attribute, value);
+//				if (entry.get(attribute) != null) {
+//					Value<?> oldValue = entry.get(attribute).get();
+//					entry.remove(attribute, oldValue);
+//				}
+//				entry.add(attribute, value);
 				
 				connection.modify(entry, ModificationOperation.REPLACE_ATTRIBUTE);
 			}
@@ -722,7 +722,18 @@ public class LDAPServiceImpl implements ILDAPService {
 					Entry entry = ((SearchResultEntry) response).getEntry();
 					if (returningAttributes != null) {
 						for (String attr : returningAttributes) {
-							attrs.put(attr, entry.get(attr) != null ? entry.get(attr).getString() : "");
+							
+							for(Attribute att : entry.getAttributes()) {
+								if(attr.equalsIgnoreCase(att.getId()))	{
+									String attrValue="";
+									for (Value<?> value : att) {
+											attrValue  += value.getString() +" ";
+											
+									} 
+									attrs.put(attr, attrValue != null ? attrValue : "");
+								}
+							}
+							
 						}
 					}
 					result.add(new LdapEntry(entry.getDn().toString(), attrs,

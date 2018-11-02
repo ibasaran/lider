@@ -324,9 +324,10 @@ public class EntityFactoryImpl implements IEntityFactory {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses,
+	public IAgent createAgent(IAgent existingAgent, String dn, String password, String hostname, String ipAddresses,
 			String macAddresses, Map<String, Object> data) {
-		AgentImpl agentImpl = new AgentImpl(existingAgent.getId(), existingAgent.getJid(), false, existingAgent.getDn(),
+		
+		AgentImpl agentImpl = new AgentImpl(existingAgent.getId(), existingAgent.getJid(), false, dn == null ? existingAgent.getDn() : dn,
 				password, hostname, ipAddresses, macAddresses, existingAgent.getCreateDate(), new Date(),
 				(Set<AgentPropertyImpl>) existingAgent.getProperties(),
 				(Set<UserSessionImpl>) existingAgent.getSessions());
