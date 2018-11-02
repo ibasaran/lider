@@ -45,6 +45,8 @@
 		<property name="agentLdapIdAttribute" value="${agent.ldap.id.attribute}" />
 		<property name="agentLdapJidAttribute" value="${agent.ldap.jid.attribute}" />
 		<property name="agentLdapObjectClasses" value="${agent.ldap.object.classes}" />
+		<property name="agentLdapObjectClasses" value="${agent.ldap.object.classes}" />
+		<property name="agentLdapRemovedFileName" value="${agent.ldap.removedfilename}" />
 
 		<property name="userLdapBaseDn" value="${user.ldap.base.dn}" />
 		<property name="userLdapUidAttribute" value="${user.ldap.uid.attribute}" />
@@ -52,6 +54,8 @@
 		<property name="userLdapObjectClasses" value="${user.ldap.object.classes}" />
 		<property name="userAuthorizationEnabled" value="${user.authorization.enabled}" />
 		<property name="groupLdapObjectClasses" value="${group.ldap.object.classes}" />
+		<property name="userLdapRolesDn" value="${user.ldap.roles.dn}" />
+		
 
 		<property name="taskManagerCheckFutureTask" value="${taskmanager.check.future.task}" />
 		<property name="taskManagerFutureTaskCheckPeriod" value="${taskmanager.future.task.check.period}" />
