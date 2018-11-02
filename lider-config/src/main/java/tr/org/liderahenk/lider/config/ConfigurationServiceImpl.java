@@ -84,6 +84,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String agentLdapIdAttribute;
 	private String agentLdapJidAttribute;
 	private String agentLdapObjectClasses;
+	private String agentLdapRemovedFileName;
 
 	// User configuration
 	private String userLdapBaseDn;
@@ -92,6 +93,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String userLdapObjectClasses;
 	private Boolean userAuthorizationEnabled;
 	private String groupLdapObjectClasses;
+	private String userLdapRolesDn;
 
 	// Task manager configuration
 	private Boolean taskManagerCheckFutureTask;
@@ -849,6 +851,30 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setCronIntervalEntrySize(Integer cronIntervalEntrySize) {
 		this.cronIntervalEntrySize = cronIntervalEntrySize;
+	}
+
+
+
+	public String getAgentLdapRemovedFileName() {
+		return agentLdapRemovedFileName;
+	}
+
+
+
+	public void setAgentLdapRemovedFileName(String agentLdapRemovedFileName) {
+		this.agentLdapRemovedFileName = agentLdapRemovedFileName;
+	}
+
+
+
+	public String getUserLdapRolesDn() {
+		return userLdapRolesDn;
+	}
+
+
+
+	public void setUserLdapRolesDn(String userLdapRolesDn) {
+		this.userLdapRolesDn = userLdapRolesDn;
 	}
 
 }

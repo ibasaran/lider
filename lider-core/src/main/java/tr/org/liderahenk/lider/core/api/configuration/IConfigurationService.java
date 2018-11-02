@@ -399,5 +399,8 @@ public interface IConfigurationService {
 	Integer getCronIntervalEntrySize();
 	
 	
+	String getAgentLdapRemovedFileName();
+	
+	String getUserLdapRolesDn();
 
 }
