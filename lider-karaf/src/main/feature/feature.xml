@@ -204,14 +204,13 @@
 		<bundle start-level="90">mvn:${groupId}/lider-restore-db/1.0.0
 		</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.ldaplogin.cfg" override="true">mvn:tr.org.liderahenk/lider-ldap-login/1.0.0/cfg</configfile>
-		<bundle start-level="90">mvn:tr.org.liderahenk/lider-ldap-login/1.0.0</bundle>
-	        <bundle start-level="90">mvn:tr.org.liderahenk/lider-ldap-login-db/1.0.0</bundle>
+		<configfile finalname="/etc/tr.org.liderahenk.ldaplogin.cfg" override="true">mvn:${groupId}/lider-ldap-login/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:${groupId}/lider-ldap-login/1.0.0</bundle>
+		<bundle start-level="90">mvn:${groupId}/lider-ldap-login-db/1.0.0</bundle>
 
-		<configfile finalname="/etc/tr.org.liderahenk.ldap.cfg" override="true">mvn:tr.org.liderahenk/lider-ldap/1.0.0/cfg</configfile>
-                <bundle start-level="90">mvn:tr.org.liderahenk/lider-ldap/1.0.0</bundle>
-                <bundle start-level="90">mvn:tr.org.liderahenk/lider-ldap-db/1.0.0</bundle>
-
+		<configfile finalname="/etc/tr.org.liderahenk.ldap.cfg" override="true">mvn:${groupId}/lider-ldap/1.0.0/cfg</configfile>
+		<bundle start-level="90">mvn:${groupId}/lider-ldap/1.0.0</bundle>
+		<bundle start-level="90">mvn:${groupId}/lider-ldap-db/1.0.0</bundle>
 	</feature>
 
 	<feature name="lider-dependent-bundles" description="${project.name}"
