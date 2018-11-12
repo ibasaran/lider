@@ -114,14 +114,13 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 				if (currentUser != null && currentUser.getPrincipal() != null) {
 					request.setOwner(currentUser.getPrincipal().toString());
 					
-					if (targetEntries != null) {
+					if (targetEntries != null && !targetEntries.isEmpty()) {
 						// Find only 'permitted' entries:
 						targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
 								targetEntries, targetOperation);
 						if (targetEntries == null || targetEntries.isEmpty()) {
-							logger.error("User not authorized: {}", currentUser.getPrincipal().toString());
-							return responseFactory.createResponse(request, RestResponseStatus.ERROR,
-									Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+							logger.error("Target Entries is not allowed for user "+ currentUser.getPrincipal().toString());
+							return responseFactory.createResponse(request, RestResponseStatus.ERROR, Arrays.asList(new String[] { "Target Entries is not allowed for user" }));
 						}
 					} else if (ldapService.getUser(currentUser.getPrincipal().toString()) == null) {
 						// Request might not contain any target entries, When
