@@ -126,6 +126,15 @@
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="mariadb" />
 	</bean>
+
+	<service ref="registrationDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IRegistrationDao" />
+		
+	<bean id="registrationDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.RegistrationDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="mariadb" />
+	</bean>
 	
 	
 	<!-- Custom Karaf commands did not work reliably and as of Karaf v4.0.6 its documentation is also removed... -->
