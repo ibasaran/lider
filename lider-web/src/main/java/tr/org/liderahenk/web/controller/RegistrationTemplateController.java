@@ -69,14 +69,14 @@ public class RegistrationTemplateController {
 	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse listRegistrationTemplates(HttpServletRequest request) {
-		logger.info("Request received. URL: '/lider/register/list'");
+		logger.info("Request received. URL: " + request.getRequestURI());
 		IRestResponse restResponse = registrationRequestProcessor.list();
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
 
-	@RequestMapping(value = "/add", method = { RequestMethod.POST })
+	@RequestMapping(value = "/add", method = { RequestMethod.GET,RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse addRegistrationTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -87,7 +87,7 @@ public class RegistrationTemplateController {
 		return restResponse;
 	}
 	
-	@RequestMapping(value = "/{id:[\\\\d]+}/delete", method = { RequestMethod.POST })
+	@RequestMapping(value = "/{id}/delete", method = { RequestMethod.GET,RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse deleteRegistrationTemplate(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
