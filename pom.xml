@@ -226,7 +226,7 @@
                     <pushFeatures>false</pushFeatures>
                     <pushHotfixes>false</pushHotfixes>
                     <pushReleases>true</pushReleases>
-                    <enableSshAgent>true</enableSshAgent>
+                    <enableSshAgent>false</enableSshAgent>
                     <flowInitContext>
                         <masterBranchName>test_master</masterBranchName>
                         <developBranchName>test_develop</developBranchName>
